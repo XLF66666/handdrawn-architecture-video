@@ -20,7 +20,8 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
 1. 读入 SVG 全部元素，列出可动画化分组（Header/大标题/各卡片/箭头/标语）。
 2. 按手绘规范重写：纸面背景 + 噪点颗粒、白卡 + 墨描边 + 内虚线、楷体文字、手绘箭头（`M.. L.. M.. l-12-9M.. l-12 9` 歪头）、配色沿用语义色但提亮。
 3. logo 需内嵌 base64 data URI（`mobile_app/assets/branding/mosu_logo.png` → `data:image/png;base64,...`），SVG 自包含。
-4. 用 `python` 校验 XML 合法 + 关键文本完整。
+   用固化脚本一键完成：`python scripts/embed_logo.py <svg> <png>`（文件只读时先 `attrib -R` 或 `chmod +w`）。
+4. 用 `python scripts/verify_sync.py <svg> <html> <token>... --xml` 校验 XML 合法 + 关键文本完整。
 
 ## 阶段 2：动画 HTML
 
@@ -37,7 +38,8 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
    - **一个元素只能有一个 `class` 属性**：`class="fu" ... class="sub"` 后者失效，需合并为 `class="fu sub"`。
    - **`<g transform="translate(...)">` 内不要放绝对坐标文字**：文字用相对坐标或把 `<g>` 去掉直接绝对定位，否则双重偏移跑出画面。
    - 文字超出边框：加宽容器或缩小字号（如 15→13）。
-6. 校验：HTML 标签配对、无重复 class、keyframes 无 `transform:`、圆点 CSS `--d <= SMIL begin`、模块时序单调。
+6. 校验：`python scripts/verify_animation.py <动画.html> [关键内容...]` ——自动检查 HTML 标签配对、
+   无重复 class、keyframes 无 `transform:`、圆点 CSS `--d <= SMIL begin`、关键内容完整。
 
 ## 阶段 3：细节调整（用户反馈循环）
 
@@ -51,14 +53,17 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
 | 黑底黑字看不见 | CSS 类优先级高于内联 `fill` | 新增白字类或改用深底浅字 |
 | 背景发白 | JPEG 帧 full-range 标记 | 导出用 PNG 帧 + ffmpeg `in_range=full:out_range=tv` + bt709 元数据 |
 
-改完跑验证脚本确认几何（`右缘 < 框右缘`、`底 < 虚线底`、`层级顺序`）。
+改完跑验证脚本确认几何（`右缘 < 框右缘`、`底 < 虚线底`、`层级顺序`），
+并用 `python scripts/verify_sync.py <svg> <html> <token>... [--absent <token>...]` 确认 SVG 与 HTML 同步。
 
 ## 阶段 4：4K 导出
 
 把动画 HTML 渲染为 3840×2160 MP4。脚本见 `scripts/`，规范见 `references/export-4k.md`。
 
-1. 环境：本机 node ≥ 18、ffmpeg（gyan 版）、Chrome `C:/Program Files/Google/Chrome/Application/chrome.exe`；npm 走代理 `--proxy=http://127.0.0.1:7897`（外网直连不可达时）。
-2. 重装依赖：`cd _export && npm init -y && npm install puppeteer-core@24 --proxy=... --https-proxy=...`（每次从零搭建，装完即用）。
+1. 环境：本机 node ≥ 18、ffmpeg（gyan 版）、Chrome `C:/Program Files/Google/Chrome/Application/chrome.exe`；npm 走代理 `--proxy=http://127.0.0.1:7897`（外网直连不可达时），可用环境变量 `MOSU_NPM_PROXY` / `MOSU_CHROME` / `MOSU_WIDTH` / `MOSU_HEIGHT` 覆盖。
+2. 一键导出（Windows）：`.\scripts\export_4k.ps1 -Html "..\架构图_动画.html" -Out "架构图_4K.mp4" -DurationMs 14000`；
+   跨平台（bash/macOS/Linux）：`./scripts/export_4k.sh <html> <out.mp4> <duration_ms>`。
+   脚本自动完成：搭建 `_export/` → 安装 puppeteer-core → 截图 → 合成 → 验证 → 清理。
 3. 逐帧截图：`node scripts/capture.js`——headless Chrome 3840×2160、`page.screenshot({type:'png'})` 无损、真实时间驱动（SMIL 圆点动画必须真实时间，虚拟时钟会跳过）、记录每帧时间戳。
 4. 合成：`py scripts/make_concat.py`（按真实时间戳生成 concat 列表）+ ffmpeg：
    ```bash
@@ -67,7 +72,13 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
      -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv out_4K.mp4
    ```
 5. 验证：`ffprobe` 确认 3840×2160 / yuv420p / color_range=tv / bt709；抽帧查背景像素 ≈ `#FBF7EF`（251,247,239）±6；抽 3 帧解码可播放。
-6. 清理：`rm -rf _diag _export`，MP4 复制到素材根目录。
+6. 12s 内版本：`python scripts/compress_timeline.py <src.html> <dst.html> 0.5`（时间轴 ×0.5），再走同一导出流程。
+7. 清理：`rm -rf _diag _export`，MP4 复制到素材根目录。
+
+## 发布前自检
+
+`python scripts/selfcheck.py . [样板目录]` ——一键检查：目录结构完整、SKILL.md frontmatter 合法、
+全部 .py/.js/.ps1 脚本语法（含 PowerShell UTF-8 BOM）、examples 引用样板存在性。任何 skill 改动提交前先跑它。
 
 ## 验收清单
 

@@ -33,12 +33,33 @@
 ## 一键导出
 
 ```powershell
-# 依赖：Node.js ≥18、ffmpeg、Chrome
+# Windows（依赖：Node.js ≥18、ffmpeg、Chrome）
 cd scripts
 .\export_4k.ps1 -Html "..\架构图_动画.html" -Out "架构图_4K.mp4" -DurationMs 14000
 ```
 
+```bash
+# macOS / Linux（bash）
+cd scripts
+./export_4k.sh ../架构图_动画.html 架构图_4K.mp4 14000
+```
+
 脚本自动完成：搭建工作目录 → 安装 puppeteer-core → headless Chrome 逐帧 PNG 截图（真实时间驱动）→ ffmpeg 合成（色彩转换 + bt709 元数据）→ 验证 → 清理。
+
+**环境变量**（均可覆盖默认值）：`MOSU_CHROME`（Chrome 路径）、`MOSU_NPM_PROXY`（npm 代理，默认 `http://127.0.0.1:7897`）、`MOSU_WIDTH` / `MOSU_HEIGHT`（分辨率，默认 3840×2160）、`MOSU_DURATION_MS`（截图时长）。
+
+## 常用脚本速查
+
+| 脚本 | 用途 |
+|---|---|
+| `scripts/embed_logo.py` | logo PNG → base64 data URI 内嵌进 SVG（自包含） |
+| `scripts/compress_timeline.py` | 时间轴 ×scale 压缩（如 0.5 → 12s 版） |
+| `scripts/verify_animation.py` | 动画 HTML 验收（标签配对/重复 class/keyframes/圆点时序/关键内容） |
+| `scripts/verify_sync.py` | SVG ↔ 动画 HTML 细节同步校验 |
+| `scripts/selfcheck.py` | 发布前一键自检（结构/frontmatter/全部脚本语法/样板存在性） |
+| `scripts/capture.js` | headless Chrome 3840×2160 PNG 逐帧截图（真实时间驱动） |
+| `scripts/make_concat.py` | 按真实时间戳生成 ffmpeg concat 列表 |
+| `scripts/export_4k.ps1` / `.sh` | 一键导出 4K MP4（Windows / 跨平台） |
 
 ## 目录结构
 
@@ -50,10 +71,18 @@ handdrawn-architecture-video/
 │   ├── animation-html.md    # 动画 HTML 基元、串行时序、箭头动画、踩坑清单
 │   └── export-4k.md         # 4K 导出环境、ffmpeg 命令、验证标准
 ├── scripts/
-│   ├── capture.js           # headless Chrome 3840×2160 PNG 逐帧截图（参数化）
+│   ├── embed_logo.py        # logo 内嵌 base64（SVG 自包含）
+│   ├── compress_timeline.py # 时间轴压缩（12s 版）
+│   ├── verify_animation.py  # 动画 HTML 验收自检
+│   ├── verify_sync.py       # SVG↔HTML 同步校验
+│   ├── selfcheck.py         # 发布前一键自检
+│   ├── capture.js           # headless Chrome 逐帧 PNG 截图（参数化）
 │   ├── make_concat.py       # 按真实时间戳生成 ffmpeg concat 列表
-│   └── export_4k.ps1        # 一键导出（装依赖+截图+合成+验证+清理）
-└── examples/README.md       # 项目样板清单（手绘 SVG / 动画 HTML / 4K MP4）
+│   ├── export_4k.ps1        # 一键导出（Windows）
+│   └── export_4k.sh         # 一键导出（bash/macOS/Linux）
+└── examples/
+    ├── README.md            # 生产样板清单（墨塑项目）+ 踩坑对照表
+    └── minimal-demo.html    # 最小自包含动画样板（克隆即可打开）
 ```
 
 ## 关键经验（已固化为规范）

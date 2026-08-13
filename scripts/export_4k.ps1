@@ -10,15 +10,24 @@
 param(
     [string]$Html = "..\架构图_动画.html",   # 动画 HTML（相对本脚本所在目录）
     [string]$Out = "架构图_动画_4K.mp4",     # 输出 MP4 文件名
-    [int]$DurationMs = 14000                 # 截图时长（动画一轮 + 尾部）
+    [int]$DurationMs = 0                      # 截图时长（0 = 用环境变量/默认）
 )
 
 $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $WorkDir = Join-Path $ScriptDir "_export"
-$NpmProxy = "http://127.0.0.1:7897"
-$Chrome = $env:MOSU_CHROME
-if (-not $Chrome) { $Chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe" }
+
+# ---- 环境变量可覆盖（默认值；兼容 Windows PowerShell 5.1）----
+if (-not $DurationMs) {
+    $envDur = $env:MOSU_DURATION_MS
+    if ($envDur) { $DurationMs = [int]$envDur } else { $DurationMs = 14000 }
+}
+$NpmProxy = $env:MOSU_NPM_PROXY;            if (-not $NpmProxy) { $NpmProxy = "http://127.0.0.1:7897" }
+$Chrome = $env:MOSU_CHROME;                 if (-not $Chrome) { $Chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe" }
+$Width = $env:MOSU_WIDTH;                   if (-not $Width) { $Width = 3840 }
+$Height = $env:MOSU_HEIGHT;                 if (-not $Height) { $Height = 2160 }
+# 透传给 capture.js（MOSU_WIDTH/HEIGHT/CHROME）
+$env:MOSU_WIDTH = $Width; $env:MOSU_HEIGHT = $Height; $env:MOSU_CHROME = $Chrome
 
 # ---------- 1. 搭建工作目录 + 安装 puppeteer-core ----------
 New-Item -ItemType Directory -Force -Path $WorkDir | Out-Null
@@ -31,7 +40,7 @@ if (-not (Test-Path "node_modules\puppeteer-core")) {
 Pop-Location
 
 # ---------- 2. 逐帧截图 ----------
-Write-Host "[2/4] 逐帧截图 $Html（$DurationMs ms, 3840x2160 PNG）..."
+Write-Host "[2/4] 逐帧截图 $Html（$DurationMs ms, ${Width}x${Height} PNG）..."
 Push-Location $WorkDir
 node (Join-Path $ScriptDir "capture.js") $Html $DurationMs frames
 Pop-Location

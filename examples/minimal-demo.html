@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>墨塑 · 手绘动画最小样板</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; background:#FBF7EF; overflow:hidden; }
+  body { display:flex; align-items:center; justify-content:center; font-family:"KaiTi","Kaiti SC","STKaiti","Microsoft YaHei",serif; }
+  .stage { position:relative; width:min(100vw, calc(100vh * 1.7778)); }
+  svg { width:100%; height:auto; display:block; }
+
+  /* ---- 动画基元（复制到你的动画 HTML）---- */
+  .draw { stroke-dasharray:5400; stroke-dashoffset:5400; animation:draw .8s ease-in-out var(--d,0s) forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .draw-sm { stroke-dasharray:2400; stroke-dashoffset:2400; animation:draw .7s ease-in-out var(--d,0s) forwards; }
+  .fillin { opacity:0; animation:fillin .5s ease-out var(--d,0s) forwards; }
+  @keyframes fillin { to { opacity:1; } }
+  .fu { opacity:0; animation:fu .5s ease-out var(--d,0s) forwards; }
+  @keyframes fu { from { opacity:0; translate:0 12px; } to { opacity:1; translate:0 0; } }
+  .up { opacity:0; animation:up .6s ease-out var(--d,0s) forwards; }
+  @keyframes up { from { opacity:0; translate:0 40px; } to { opacity:1; translate:0 0; } }
+  .fade { opacity:0; animation:fade .5s ease-out var(--d,0s) forwards; }
+  @keyframes fade { to { opacity:1; } }
+  .dot { opacity:0; animation:dotIn .3s linear var(--d,0s) forwards; }
+  @keyframes dotIn { to { opacity:1; } }
+
+  text { font-family:"KaiTi","Kaiti SC","STKaiti","Microsoft YaHei",serif; fill:#2E2A45; }
+  .cap{font-size:16px;font-weight:700;letter-spacing:2.7px}
+  .headline{font-size:46px;font-weight:700}
+  .sub{font-size:17px;fill:#6E6784}
+  .panelTitle{font-size:26px;font-weight:700}
+  .purple{fill:#6D5CE0}.blue{fill:#3E6BD8}.teal{fill:#2E9E8B}.amber{fill:#C77D1E}
+  .ink{stroke:#3A3650;stroke-linecap:round;stroke-linejoin:round}
+
+  .legend { position:absolute; left:12px; bottom:10px; font-size:13px; color:#9a8fae; user-select:none; }
+  .loop-note { position:absolute; right:12px; bottom:10px; font-size:13px; color:#b4a9c9; user-select:none; }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- 纸面背景（常显） -->
+  <rect width="1920" height="1080" fill="#FBF7EF"/>
+  <g fill="#DCCFB8" opacity=".45">
+    <circle cx="120" cy="90" r="1.6"/><circle cx="600" cy="60" r="1.1"/><circle cx="1400" cy="80" r="1.6"/><circle cx="1800" cy="500" r="1.1"/>
+    <circle cx="100" cy="700" r="1.6"/><circle cx="1700" cy="950" r="1.1"/><circle cx="500" cy="1000" r="1.6"/>
+  </g>
+
+  <!-- ═══ ① 大标题 ═══ -->
+  <text class="fu cap purple" style="--d:.4s" x="960" y="130" text-anchor="middle">手绘架构图 · 动画样板</text>
+  <text class="fu headline" style="--d:.7s" x="960" y="190" text-anchor="middle">模块串行 <tspan fill="#F2A65A">＋</tspan> 箭头流动</text>
+  <path class="draw-sm" style="--d:.9s" d="M720 205q240 8 480 0" fill="none" stroke="#F2A65A" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- ═══ ② 模块 A（下浮上入） ═══ -->
+  <g class="up" style="--d:1.6s" transform="rotate(-.35 300 420)">
+    <rect x="90" y="280" width="420" height="280" rx="22" fill="#F4F1FF" class="ink" stroke-width="3.2"/>
+    <rect x="99" y="289" width="402" height="262" rx="16" fill="none" stroke="#B9ACF2" stroke-width="1.8" stroke-dasharray="10 7"/>
+    <path d="M114 302v236" stroke="#6D5CE0" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text class="fu panelTitle" style="--d:2.0s" x="150" y="360">模块 A</text>
+  <text class="fu sub" style="--d:2.2s" x="150" y="400">先出现，完全展示后再出箭头</text>
+
+  <!-- ═══ ③ 箭头 A→B（描线 + 圆点流动） ═══ -->
+  <path class="draw-sm" style="--d:2.9s" d="M516 420C550 410 570 410 604 420" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+  <path class="fade" style="--d:3.2s" d="M604 420l-14-10M604 420l-14 10" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+  <circle class="dot" style="--d:2.95s" cx="520" cy="419" r="8" fill="#6D5CE0">
+    <animateMotion dur="0.7s" begin="3.0s" repeatCount="1" path="M0 0 C34 -10 54 -10 88 0"/>
+  </circle>
+
+  <!-- ═══ ④ 模块 B ═══ -->
+  <g class="up" style="--d:3.6s" transform="rotate(.3 1000 420)">
+    <rect x="600" y="280" width="420" height="280" rx="22" fill="#EFF4FF" class="ink" stroke-width="3.2"/>
+    <rect x="609" y="289" width="402" height="262" rx="16" fill="none" stroke="#9BB9ED" stroke-width="1.8" stroke-dasharray="10 7"/>
+    <path d="M996 302v236" stroke="#3E6BD8" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <text class="fu panelTitle" style="--d:4.0s" x="640" y="360">模块 B</text>
+  <text class="fu sub" style="--d:4.2s" x="640" y="400">上一个模块完成后才出现</text>
+
+  <!-- ═══ ⑤ 落地提示 ═══ -->
+  <path class="draw" style="--d:5.2s" d="M1300 420C1340 410 1360 410 1400 420" fill="none" stroke="#2E9E8B" stroke-width="4" stroke-linecap="round"/>
+  <path class="fade" style="--d:5.5s" d="M1400 420l-14-10M1400 420l-14 10" fill="none" stroke="#2E9E8B" stroke-width="4" stroke-linecap="round"/>
+  <circle class="dot" style="--d:5.25s" cx="1304" cy="419" r="8" fill="#2E9E8B">
+    <animateMotion dur="0.7s" begin="5.3s" repeatCount="1" path="M0 0 C40 -10 60 -10 100 0"/>
+  </circle>
+  <g class="fu" style="--d:5.6s" transform="translate(1420 395) rotate(.2 140 25)">
+    <rect width="280" height="50" rx="12" fill="#E9F7F3" stroke="#2E9E8B" stroke-width="2.4"/>
+    <text x="140" y="32" class="teal cap" text-anchor="middle">→ 真实 APP 界面落地</text>
+  </g>
+</svg>
+  <div class="legend">手绘动画最小样板 — 约 6 秒一轮</div>
+  <div class="loop-note">刷新页面重新播放</div>
+</div>
+</body>
+</html>

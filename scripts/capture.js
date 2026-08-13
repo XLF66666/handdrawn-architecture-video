@@ -18,8 +18,10 @@ const fs = require('fs');
 const path = require('path');
 
 const CHROME = process.env.MOSU_CHROME || 'C:/Program Files/Google/Chrome/Application/chrome.exe';
+const WIDTH = parseInt(process.env.MOSU_WIDTH || '3840', 10);
+const HEIGHT = parseInt(process.env.MOSU_HEIGHT || '2160', 10);
 const HTML_REL = process.argv[2] || '../架构图_动画.html';
-const DURATION = parseInt(process.argv[3] || '14000', 10);
+const DURATION = parseInt(process.argv[3] || process.env.MOSU_DURATION_MS || '14000', 10);
 const OUT_DIR = process.argv[4] || 'frames';
 const HTML = path.resolve(process.cwd(), HTML_REL);
 const OUT = path.resolve(process.cwd(), OUT_DIR);
@@ -29,10 +31,10 @@ const OUT = path.resolve(process.cwd(), OUT_DIR);
   const browser = await puppeteer.launch({
     executablePath: CHROME,
     headless: true,
-    args: ['--window-size=3840,2160', '--hide-scrollbars', '--force-device-scale-factor=1', '--disable-gpu'],
+    args: [`--window-size=${WIDTH},${HEIGHT}`, '--hide-scrollbars', '--force-device-scale-factor=1', '--disable-gpu'],
   });
   const page = await browser.newPage();
-  await page.setViewport({ width: 3840, height: 2160, deviceScaleFactor: 1 });
+  await page.setViewport({ width: WIDTH, height: HEIGHT, deviceScaleFactor: 1 });
 
   const fileUrl = 'file:///' + HTML.replace(/\\/g, '/');
   await page.goto(fileUrl, { waitUntil: 'load' });
