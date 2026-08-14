@@ -98,3 +98,17 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
 - [ ] 动画 HTML：标签配对、无重复 class、keyframes 无 transform、时序单调、箭头圆点 SMIL 同步
 - [ ] 细节调整：无碰边框、无文字溢出、无层级遮挡、背景色正确
 - [ ] 4K MP4：3840×2160 / h264 / yuv420p / tv / bt709 / 背景像素 PASS / 可播放
+
+## FAQ（常见问题速查）
+
+详细版见 `README.md`「FAQ」。实战高频问题：
+
+| 问题 | 一句话解法 |
+|---|---|
+| 导出视频一卡一卡 | 逐帧 screenshot 仅 ~4.8fps，改 1080p CDP screencast + lanczos 放大（~24fps） |
+| MP4 背景发白 | JPEG 帧需 `scale=in_range=full:out_range=tv` + bt709/tv 元数据 |
+| 元素堆左上角/错位 | keyframes 禁用 `transform:`，只用独立 `translate` 属性 |
+| 文字被不透明色块遮挡 | 半透明底色用 `fill-opacity`，不要 `opacity`（selfcheck 自动检测） |
+| 文字超框/三卡重叠 | `python scripts/check_overlap.py <html> [--cards]` 自动检查 |
+| PowerShell 解析报错 | ps1 需 UTF-8 BOM，勿用 PS7 `??` 运算符 |
+| heredoc 后 node SyntaxError | `HTML.replace(/\\/g,'/')` 反斜杠被吃掉，用 edit_file 写入（selfcheck 检测） |

@@ -1,0 +1,32 @@
+# ============================================================
+# CI — 每次 push / PR 自动运行 selfcheck.py
+# runner 用 windows-latest：自带 Windows PowerShell 5.1，
+# 满足 selfcheck 对 export_4k.ps1 的 BOM + 语法解析检查。
+# 用法：推送本仓库到 GitHub 即自动生效（Gitee 可用 Gitee Go 等效配置）。
+# ============================================================
+name: selfcheck
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  selfcheck:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run selfcheck
+        run: python scripts/selfcheck.py .
+
+      - name: Verify capture.js syntax
+        run: node --check scripts/capture.js

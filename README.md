@@ -100,6 +100,45 @@ handdrawn-architecture-video/
 - 动画 HTML：标签配对、无重复 class、keyframes 无 `transform:`、圆点 CSS `--d ≤ SMIL begin`、模块时序单调
 - 4K MP4：`ffprobe` 显示 h264 / 3840×2160 / yuv420p / color_range=tv / bt709；背景像素 ≈ `#FBF7EF` ±6；抽帧可播放
 
+## FAQ
+
+### 导出的视频为什么一卡一卡？
+
+逐帧 `page.screenshot()` 是串行瓶颈：4K PNG 每帧约 210ms，实际仅 ~4.8fps。
+改用 **1080p CDP `Page.startScreencast` + lanczos 放大 4K**（`scripts/capture.js`）：~24fps，
+清晰度 PSNR 46.9dB（与 4K 原生几乎无差异）。逐帧截图方案已弃用。
+
+### MP4 背景发白/颜色不对？
+
+JPEG 帧是 full-range（yuvj420p），播放器按 tv 解释会整体发白。
+合成时**必须**加 `-vf "scale=in_range=full:out_range=tv"` + `-colorspace bt709
+-color_primaries bt709 -color_trc bt709 -color_range tv`（`export_4k.ps1/.sh` 已内置）。
+
+### 动画里元素堆到左上角/错位？
+
+CSS `transform` 会覆盖 SVG 的 `transform="translate(...)"` 定位。
+动画 keyframes 禁止写 `transform:`，只用独立属性 `translate`（如 `translate:0 12px → 0 0`）。
+
+### 卡片/文字被不透明色块遮挡？
+
+动画类元素（fade/fu/fillin/draw）上的 `opacity=".12"` 会被 CSS opacity 动画覆盖成不透明。
+半透明底色请用 `fill-opacity=".12"`（`selfcheck.py` 会自动检测这类坑）。
+
+### 文字超出卡片/按钮边框？
+
+估算文字宽度（中文=字号px，ASCII≈0.55×字号）是否超过容器右缘；
+或加宽容器、缩小字号。可用 `python scripts/check_overlap.py <动画.html>` 自动检查（含 `--cards` 三卡重叠模式）。
+
+### Windows 上 PowerShell 脚本解析报错？
+
+`export_4k.ps1` 必须带 **UTF-8 BOM**（否则 PowerShell 5.1 按 GBK 读中文乱码报语法错）；
+且只用 5.1 兼容语法（不要用 `??` 等 PS7 运算符）。
+
+### 脚本里 heredoc 写入后 node 报 SyntaxError？
+
+heredoc/shell 写入会吃掉 `\\` 反斜杠。`capture.js` 的 `HTML.replace(/\\/g, '/')`
+若变成 `/\/g` 会报 `missing ) after argument list`——用 `edit_file` 写入或用 `selfcheck.py` 检测。
+
 ## License
 
 [MIT](LICENSE)

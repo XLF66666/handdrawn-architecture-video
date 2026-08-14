@@ -32,6 +32,8 @@ REQUIRED = [
     'references/export-4k.md',
     'scripts/capture.js',
     'scripts/make_concat.py',
+    'scripts/batch_export.py',
+    'scripts/check_overlap.py',
     'scripts/export_4k.ps1',
     'scripts/export_4k.sh',
     'scripts/embed_logo.py',
@@ -116,6 +118,37 @@ def check_examples(skill_dir: str, sample_dir: str | None) -> list[str]:
     return errs
 
 
+ANIM_CLASSES = ('fade', 'fu', 'fillin', 'draw', 'draw-sm', 'dot')
+
+
+def check_html_pitfalls(path: str) -> list[str]:
+    """动画 HTML 常见坑检测：
+    1) 动画类元素（fade/fu/fillin/draw/draw-sm/dot）上不应有 opacity=".XX"
+       —— CSS opacity 动画会覆盖该属性，导致底色变不透明遮挡文字，应改 fill-opacity。
+    2) 一个元素只能有一个 class 属性。
+    """
+    src = open(path, encoding='utf-8').read()
+    errs = []
+    for m in re.finditer(r'<[^>]*class="(?:fade|fu|fillin|draw|draw-sm|dot)[^"]*"[^>]*\sopacity="\.', src):
+        errs.append(f'动画类元素含 opacity 属性（应改 fill-opacity）: …{m.group(0)[-60:]}')
+    for m in re.finditer(r'class="[^"]*"[^>]*class="', src):
+        errs.append(f'重复 class 属性: …{m.group(0)[-60:]}')
+    return errs
+
+
+def check_capture_regex(path: str) -> list[str]:
+    """capture.js 的 file:// 反斜杠替换正则必须完整（/\\\\/g 两个反斜杠）。
+    heredoc/shell 写入时 \\\\ 常被吃掉一个变成 /\\/g，导致 SyntaxError。"""
+    src = open(path, encoding='utf-8').read()
+    errs = []
+    m = re.search(r'HTML\.replace\((/[^/]+/g),\s*\'/\'\)', src)
+    if m:
+        pattern = m.group(1)
+        if pattern.count('\\') < 2:
+            errs.append(f'capture.js 的 fileUrl 反斜杠替换正则不完整: {pattern}（应为 /\\\\/g）')
+    return errs
+
+
 def main() -> int:
     skill_dir = sys.argv[1] if len(sys.argv) > 1 else os.path.dirname(os.path.abspath(__file__))
     sample_dir = sys.argv[2] if len(sys.argv) > 2 else None
@@ -136,13 +169,22 @@ def main() -> int:
             errors += check_node(p)
     for rel in ['scripts/make_concat.py', 'scripts/embed_logo.py',
                 'scripts/compress_timeline.py', 'scripts/verify_animation.py',
-                'scripts/verify_sync.py', 'scripts/selfcheck.py']:
+                'scripts/verify_sync.py', 'scripts/batch_export.py',
+                'scripts/check_overlap.py', 'scripts/selfcheck.py']:
         p = os.path.join(skill_dir, rel)
         if os.path.exists(p):
             errors += check_py(p)
     ps1 = os.path.join(skill_dir, 'scripts/export_4k.ps1')
     if os.path.exists(ps1):
         errors += check_ps1(ps1)
+
+    # 3.5) HTML 坑检测（minimal-demo.html 样板）+ capture.js 正则完整性
+    demo = os.path.join(skill_dir, 'examples', 'minimal-demo.html')
+    if os.path.exists(demo):
+        errors += check_html_pitfalls(demo)
+    cap = os.path.join(skill_dir, 'scripts', 'capture.js')
+    if os.path.exists(cap):
+        errors += check_capture_regex(cap)
 
     # 4) 样板存在性
     errors += check_examples(skill_dir, sample_dir)
