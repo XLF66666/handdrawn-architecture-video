@@ -45,11 +45,11 @@ Push-Location $WorkDir
 node (Join-Path $ScriptDir "capture.js") $Html $DurationMs frames
 Pop-Location
 
-# ---------- 3. 合成 4K MP4（bt709/tv 色彩） ----------
-Write-Host "[3/4] 合成 4K MP4..."
+# ---------- 3. 合成 4K MP4（1080p 采集 → lanczos 放大 4K，bt709/tv 色彩） ----------
+Write-Host "[3/4] 合成 4K MP4（lanczos 放大）..."
 python (Join-Path $ScriptDir "make_concat.py") (Join-Path $WorkDir "frames") (Join-Path $WorkDir "concat.txt")
 ffmpeg -y -f concat -safe 0 -i (Join-Path $WorkDir "concat.txt") `
-    -vf "scale=in_range=full:out_range=tv" `
+    -vf "scale=3840:2160:flags=lanczos,scale=in_range=full:out_range=tv" `
     -c:v libx264 -pix_fmt yuv420p -crf 18 -preset medium -movflags +faststart `
     -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv `
     (Join-Path $ScriptDir $Out)

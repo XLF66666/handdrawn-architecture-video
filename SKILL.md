@@ -73,16 +73,16 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
 
 1. 环境：本机 node ≥ 18、ffmpeg（gyan 版）、Chrome `C:/Program Files/Google/Chrome/Application/chrome.exe`；npm 走代理 `--proxy=http://127.0.0.1:7897`（外网直连不可达时），可用环境变量 `MOSU_NPM_PROXY` / `MOSU_CHROME` / `MOSU_WIDTH` / `MOSU_HEIGHT` 覆盖。
 2. 一键导出（Windows）：`.\scripts\export_4k.ps1 -Html "..\架构图_动画.html" -Out "架构图_4K.mp4" -DurationMs 14000`；
-   跨平台（bash/macOS/Linux）：`./scripts/export_4k.sh <html> <out.mp4> <duration_ms>`。
-   脚本自动完成：搭建 `_export/` → 安装 puppeteer-core → 截图 → 合成 → 验证 → 清理。
-3. 逐帧截图：`node scripts/capture.js`——headless Chrome 3840×2160、`page.screenshot({type:'png'})` 无损、真实时间驱动（SMIL 圆点动画必须真实时间，虚拟时钟会跳过）、记录每帧时间戳。
-4. 合成：`py scripts/make_concat.py`（按真实时间戳生成 concat 列表）+ ffmpeg：
+   跨平台（bash/macOS/Linux）：`./scripts/export_4k.sh <html> <out.mp4> <duration_ms>`；多素材：`python scripts/batch_export.py [start] [end]`。
+   脚本自动完成：搭建 `_export/` → 安装 puppeteer-core → 采集 → 合成 → 验证 → 清理。
+3. 采集：`node scripts/capture.js <html> <duration_ms> <out_dir>`——**1080p CDP `Page.startScreencast`**（浏览器原生帧流，quality 100，约 24fps；对比逐帧 `page.screenshot` PNG-4K 仅 4.8fps 是卡顿根源），真实时间驱动（SMIL 圆点动画正常）、记录每帧时间戳。
+4. 合成：`py scripts/make_concat.py`（按真实时间戳生成 concat 列表）+ ffmpeg（**lanczos 放大 4K** + full→tv 色彩，实测 PSNR 46.9dB 与 4K 原生几乎无差异）：
    ```bash
-   ffmpeg -y -f concat -safe 0 -i concat.txt -vf "scale=in_range=full:out_range=tv" \
+   ffmpeg -y -f concat -safe 0 -i concat.txt -vf "scale=3840:2160:flags=lanczos,scale=in_range=full:out_range=tv" \
      -c:v libx264 -pix_fmt yuv420p -crf 18 -preset medium -movflags +faststart \
      -colorspace bt709 -color_primaries bt709 -color_trc bt709 -color_range tv out_4K.mp4
    ```
-5. 验证：`ffprobe` 确认 3840×2160 / yuv420p / color_range=tv / bt709；抽帧查背景像素 ≈ `#FBF7EF`（251,247,239）±6；抽 3 帧解码可播放。
+5. 验证：`ffprobe` 确认 3840×2160 / yuv420p / color_range=tv / bt709；帧率抽查（帧数÷时长）≈ 20–25fps 流畅；抽帧查背景像素 ≈ `#FBF7EF`（251,247,239）±8；抽 3 帧解码可播放。
 6. 12s 内版本：`python scripts/compress_timeline.py <src.html> <dst.html> 0.5`（时间轴 ×0.5），再走同一导出流程。
 7. 清理：`rm -rf _diag _export`，MP4 复制到素材根目录。
 
