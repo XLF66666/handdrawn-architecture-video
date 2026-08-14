@@ -22,9 +22,16 @@ out_concat = sys.argv[2] if len(sys.argv) > 2 else os.path.join(base, 'concat.tx
 
 times = json.load(open(os.path.join(frames_dir, 'timestamps.json'), encoding='utf-8'))
 
+# 自动检测帧扩展名（png=逐帧截图版 / jpg=CDP screencast 版）
+ext = 'png'
+for fn in os.listdir(frames_dir):
+    if fn.startswith('frame_') and fn.endswith(('.png', '.jpg')):
+        ext = fn.rsplit('.', 1)[-1]
+        break
+
 lines = ['ffconcat version 1.0', '']
 for i, fr in enumerate(times):
-    lines.append(f"file '{frames_dir}/frame_{fr['idx']:05d}.png'")
+    lines.append(f"file '{frames_dir}/frame_{fr['idx']:05d}.{ext}'")
     if i + 1 < len(times):
         dur = (times[i + 1]['t'] - fr['t']) / 1000.0
     else:
@@ -32,7 +39,7 @@ for i, fr in enumerate(times):
     if dur <= 0:
         dur = 0.04
     lines.append(f"duration {dur:.4f}")
-lines.append(f"file '{frames_dir}/frame_{times[-1]['idx']:05d}.png'")
+lines.append(f"file '{frames_dir}/frame_{times[-1]['idx']:05d}.{ext}'")
 
 with open(out_concat, 'w', encoding='utf-8') as f:
     f.write('\n'.join(lines) + '\n')
