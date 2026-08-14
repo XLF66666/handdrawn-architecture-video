@@ -75,10 +75,19 @@ def parse_svg_geometry(src: str, class_fs=None):
             ym = re.search(r'y="([\d.\-]+)"', attrs)
             fm = re.search(r'font-size="([\d.\-]+)"', attrs)
             middle = 'text-anchor="middle"' in attrs
-            if not xm or not ym or not content:
+            rotated = 'rotate(' in attrs              # rotate(-90 ...) 竖排文字：横排估算不适用
+            if not xm or not ym or not content or rotated:
                 continue
-            cls = (re.search(r'class="([^"]+)"', attrs) or [None, ''])[1].split()[0] if re.search(r'class="([^"]+)"', attrs) else ''
-            fs = float(fm.group(1)) if fm else (class_fs or CLASS_FS).get(cls, 16.0)
+            # class_fs 匹配：遍历所有类名（如 class="fade p tiny" → fade/p/tiny），取首个命中字号
+            cls_list = (re.search(r'class="([^"]+)"', attrs) or [None, ''])[1].split()
+            fs = 16.0
+            if fm:
+                fs = float(fm.group(1))
+            else:
+                for c in cls_list:
+                    if c in (class_fs or CLASS_FS):
+                        fs = (class_fs or CLASS_FS)[c]
+                        break
             lx, ly = float(xm.group(1)), float(ym.group(1))
             ax, ay = stack[-1][0] + lx, stack[-1][1] + ly
             ew = est_width(content, fs)
