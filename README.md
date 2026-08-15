@@ -29,6 +29,28 @@
 
 > 手绘风格：暖纸底 `#FBF7EF` · 楷体 · 卡片微旋转 · 墨线描边 · 手绘箭头 · 圆点流动动画 —— 全程统一，观感友好。
 
+## 🎬 效果展示
+
+下面是**本 skill 自己产出**的完整演示（手绘 SVG → 动画 HTML → 4K MP4 三件套，即本文档开篇图的制作过程）：
+
+### 动画演示（GIF，自动播放）
+
+![handdrawn-architecture-video 四阶段流水线动画](examples/preview/skill_pipeline_anim.gif)
+
+### 手绘作品（SVG 直接渲染）
+
+![手绘四阶段流水线 SVG](examples/preview/skill_pipeline.svg)
+
+### 4K 视频帧（3840×2160）
+
+![4K 视频帧](examples/preview/skill_pipeline_frame.png)
+
+### 4K 视频演示（点击播放）
+
+[![▶ 点击播放 4K 完整演示](examples/preview/skill_pipeline_title.png)](examples/preview/skill_pipeline_4K.mp4)
+
+> 💡 演示素材均可直接在 `examples/preview/` 查看：`skill_pipeline.svg`（手绘源）、`skill_pipeline.html`（动画源，双击即播）、`skill_pipeline_4K.mp4`（4K 成片）。
+
 ## 🎯 特性
 
 - **四阶段流水线**：SVG 手绘化 → 动画 HTML → 细节调整 → 4K 导出，每阶段独立可交付

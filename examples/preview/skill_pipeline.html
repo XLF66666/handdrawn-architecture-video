@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>handdrawn-architecture-video · 手绘架构图动画视频流水线</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; background:#FBF7EF; overflow:hidden; }
+  body { display:flex; align-items:center; justify-content:center; font-family:"KaiTi","Kaiti SC","STKaiti","Microsoft YaHei",serif; }
+  .stage { position:relative; width:min(100vw, calc(100vh * 1.7778)); }
+  svg { width:100%; height:auto; display:block; }
+
+  /* ---- 动画基元 ---- */
+  .draw { stroke-dasharray:3400; stroke-dashoffset:3400; animation:draw .8s ease-in-out var(--d,0s) forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .draw-sm { stroke-dasharray:2400; stroke-dashoffset:2400; animation:draw .7s ease-in-out var(--d,0s) forwards; }
+  .fillin { opacity:0; animation:fillin .5s ease-out var(--d,0s) forwards; }
+  @keyframes fillin { to { opacity:1; } }
+  .fu { opacity:0; animation:fu .5s ease-out var(--d,0s) forwards; }
+  @keyframes fu { from { opacity:0; translate:0 12px; } to { opacity:1; translate:0 0; } }
+  .up { opacity:0; animation:up .6s ease-out var(--d,0s) forwards; }
+  @keyframes up { from { opacity:0; translate:0 40px; } to { opacity:1; translate:0 0; } }
+  .fade { opacity:0; animation:fade .5s ease-out var(--d,0s) forwards; }
+  @keyframes fade { to { opacity:1; } }
+
+  text { font-family:"KaiTi","Kaiti SC","STKaiti","Microsoft YaHei",serif; fill:#2E2A45; }
+  .sans{font-family:"Segoe UI","Microsoft YaHei",sans-serif}
+  .cap{font-size:18px;font-weight:700;letter-spacing:2.4px}
+  .headline{font-size:52px;font-weight:700;letter-spacing:2px}
+  .sub{font-size:19px;fill:#6E6784}
+  .stepTitle{font-size:26px;font-weight:700}
+  .stepEn{font-size:15px;font-weight:700;letter-spacing:2px}
+  .body{font-size:17px;fill:#6E6784}
+  .mini{font-size:15px;fill:#6E6784}
+  .purple{fill:#6D5CE0}.blue{fill:#3E6BD8}.teal{fill:#2E9E8B}.amber{fill:#C77D1E}
+  .ink{stroke:#3A3650;stroke-linecap:round;stroke-linejoin:round}
+
+  .legend { position:absolute; left:12px; bottom:10px; font-size:13px; color:#9a8fae; user-select:none; }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- 纸面背景（常显） -->
+  <rect width="1920" height="1080" fill="#FBF7EF"/>
+  <g fill="#DCCFB8" opacity=".45">
+    <circle cx="120" cy="90" r="1.6"/><circle cx="600" cy="60" r="1.1"/><circle cx="1400" cy="80" r="1.6"/><circle cx="1800" cy="500" r="1.1"/>
+    <circle cx="100" cy="700" r="1.6"/><circle cx="1700" cy="950" r="1.1"/><circle cx="500" cy="1000" r="1.6"/><circle cx="1500" cy="200" r="1.1"/>
+  </g>
+  <path class="fade" style="--d:.2s" d="M63 1008q17-13 34 0t35 0M1775 62q18-13 38 1t40-1" fill="none" stroke="#D7CDBA" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- ═══ ① Header ═══ -->
+  <g class="fillin" style="--d:.3s" filter="url(#shadow)">
+    <circle cx="111" cy="80" r="38" fill="#FFF" stroke="#3A3650" stroke-width="3"/>
+    <image href="mosu_logo.png" x="79" y="46" width="64" height="68" preserveAspectRatio="xMidYMid meet"/>
+  </g>
+  <text class="fu" style="--d:.5s" x="158" y="78" font-size="36" font-weight="700">handdrawn<tspan class="sans purple" letter-spacing="2">-architecture-video</tspan></text>
+  <path class="draw-sm" style="--d:.7s" d="M158 93C298 88 444 89 586 94" fill="none" stroke="#F2A65A" stroke-width="5" stroke-linecap="round"/>
+  <text class="fu sub" style="--d:.9s" x="158" y="122">AI AGENT SKILL · 手绘架构图动画视频</text>
+  <g class="fu" style="--d:1.1s" transform="translate(1504 51) rotate(.55 172 27)">
+    <rect width="344" height="54" rx="16" fill="#FFF" stroke="#3A3650" stroke-width="3"/>
+    <rect x="7" y="7" width="330" height="40" rx="11" fill="none" stroke="#B9ACF2" stroke-width="1.8" stroke-dasharray="7 6"/>
+    <circle cx="31" cy="27" r="8" fill="#EFEAFE"/><circle cx="31" cy="27" r="4" fill="#6D5CE0"/>
+    <text x="52" y="34" class="purple" font-size="18" font-weight="700">四阶段流水线 · 一次说清四步出片</text>
+  </g>
+
+  <!-- ═══ ② 大标题 ═══ -->
+  <text class="fu cap purple" style="--d:1.4s" x="960" y="150" text-anchor="middle">把技术图 / 描述，变成手绘动画 4K 视频</text>
+  <text class="fu headline" style="--d:1.7s" x="960" y="212" text-anchor="middle">手绘架构图动画视频流水线</text>
+  <path class="draw-sm" style="--d:1.9s" d="M740 226q220 8 440 0" fill="none" stroke="#F2A65A" stroke-width="5" stroke-linecap="round"/>
+  <text class="fu sub" style="--d:2.1s" x="960" y="256" text-anchor="middle">SVG 手绘化 → 动画 HTML → 细节调整 → 4K MP4 导出</text>
+
+  <!-- ═══ ③ 阶段1：SVG 手绘化（下浮上入） ═══ -->
+  <g class="up" style="--d:2.4s" transform="rotate(-.3 280 480)" filter="url(#shadow)">
+    <rect x="70" y="330" width="420" height="300" rx="24" fill="#F4F1FF" class="ink" stroke-width="3.2"/>
+    <rect x="79" y="339" width="402" height="282" rx="17" fill="none" stroke="#B9ACF2" stroke-width="1.8" stroke-dasharray="10 7"/>
+    <path d="M95 358v245" stroke="#6D5CE0" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g class="fu" style="--d:2.8s">
+    <circle cx="138" cy="372" r="24" fill="#6D5CE0"/><text x="138" y="380" fill="#FFF" text-anchor="middle" font-size="22" font-weight="700">1</text>
+    <text x="180" y="378" class="stepEn purple">SVG SKETCH</text>
+  </g>
+  <text class="fu stepTitle" style="--d:3.0s" x="126" y="424">SVG 手绘化</text>
+  <text class="fu body" style="--d:3.2s" x="126" y="456">深色科技风 → 米色纸面手绘留白版</text>
+  <g class="fu" style="--d:3.4s" transform="translate(126 486)">
+    <rect width="310" height="96" rx="15" fill="#FFF" stroke="#6D5CE0" stroke-width="2.4"/>
+    <text x="18" y="28" class="purple" font-size="15" font-weight="700">暖纸底 · 楷体 · 墨线</text>
+    <path d="M18 40h274" stroke="#DED5F2" stroke-width="1.8"/>
+    <text x="18" y="66" class="body">卡片微旋转 · 虚线装饰</text>
+    <text x="18" y="90" class="body">logo 内嵌 base64 · 自包含</text>
+  </g>
+
+  <!-- ═══ ④ 箭头 1→2（描线） ═══ -->
+  <path class="draw-sm" style="--d:3.9s" d="M496 480C511 472 524 472 539 480" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+  <path class="fade" style="--d:4.2s" d="M539 480l-12-9M539 480l-12 9" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- ═══ ⑤ 阶段2：动画 HTML（下浮上入） ═══ -->
+  <g class="up" style="--d:4.5s" transform="rotate(.3 962 480)" filter="url(#shadow)">
+    <rect x="752" y="330" width="420" height="300" rx="24" fill="#EFF4FF" class="ink" stroke-width="3.2"/>
+    <rect x="761" y="339" width="402" height="282" rx="17" fill="none" stroke="#9BB9ED" stroke-width="1.8" stroke-dasharray="10 7"/>
+  </g>
+  <g class="fu" style="--d:4.9s">
+    <circle cx="820" cy="372" r="24" fill="#3E6BD8"/><text x="820" y="380" fill="#FFF" text-anchor="middle" font-size="22" font-weight="700">2</text>
+    <text x="862" y="378" class="stepEn blue">ANIMATED HTML</text>
+  </g>
+  <text class="fu stepTitle" style="--d:5.1s" x="808" y="424">动画 HTML</text>
+  <text class="fu body" style="--d:5.3s" x="808" y="456">模块串行出场 · 箭头描线与圆点流动</text>
+  <g class="fu" style="--d:5.5s" transform="translate(808 486)">
+    <rect width="310" height="96" rx="15" fill="#FFF" stroke="#3E6BD8" stroke-width="2.4"/>
+    <text x="18" y="28" class="blue" font-size="15" font-weight="700">纯 CSS + SMIL · 零依赖</text>
+    <path d="M18 40h274" stroke="#DCE7F8" stroke-width="1.8"/>
+    <text x="18" y="66" class="body">双击即播 · 刷新重播</text>
+    <text x="18" y="90" class="body">时间轴 --d 精确控制</text>
+  </g>
+
+  <!-- ═══ ⑥ 箭头 2→3（描线） ═══ -->
+  <path class="draw-sm" style="--d:6.2s" d="M1178 480C1193 472 1206 472 1221 480" fill="none" stroke="#3E6BD8" stroke-width="4" stroke-linecap="round"/>
+  <path class="fade" style="--d:6.5s" d="M1221 480l-12-9M1221 480l-12 9" fill="none" stroke="#3E6BD8" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- ═══ ⑦ 阶段3：细节调整（下浮上入） ═══ -->
+  <g class="up" style="--d:6.8s" transform="rotate(-.3 1644 480)" filter="url(#shadow)">
+    <rect x="1434" y="330" width="420" height="300" rx="24" fill="#E9F7F3" class="ink" stroke-width="3.2"/>
+    <rect x="1443" y="339" width="402" height="282" rx="17" fill="none" stroke="#85CCBD" stroke-width="1.8" stroke-dasharray="10 7"/>
+  </g>
+  <g class="fu" style="--d:7.2s">
+    <circle cx="1502" cy="372" r="24" fill="#2E9E8B"/><text x="1502" y="380" fill="#FFF" text-anchor="middle" font-size="22" font-weight="700">3</text>
+    <text x="1544" y="378" class="stepEn teal">POLISH LOOP</text>
+  </g>
+  <text class="fu stepTitle" style="--d:7.4s" x="1490" y="424">细节调整</text>
+  <text class="fu body" style="--d:7.6s" x="1490" y="456">用户反馈 → 局部修复，不改整体</text>
+  <g class="fu" style="--d:7.8s" transform="translate(1490 486)">
+    <rect width="310" height="96" rx="15" fill="#FFF" stroke="#2E9E8B" stroke-width="2.4"/>
+    <text x="18" y="28" class="teal" font-size="15" font-weight="700">碰边框 · 文字溢出 · 层级遮挡</text>
+    <path d="M18 40h274" stroke="#CDECE3" stroke-width="1.8"/>
+    <text x="18" y="66" class="body">几何自检 check_overlap</text>
+    <text x="18" y="90" class="body">SVG ↔ HTML 同步校验</text>
+  </g>
+
+  <!-- ═══ ⑧ 底部价值条 ═══ -->
+  <g class="up" style="--d:8.6s" transform="translate(144 680) rotate(-.12 816 54)" filter="url(#shadow)">
+    <rect width="1632" height="108" rx="24" fill="#FFF" stroke="#3A3650" stroke-width="3.2"/>
+    <rect x="9" y="9" width="1614" height="90" rx="17" fill="#FFF6E8" stroke="#E8B56E" stroke-width="1.8" stroke-dasharray="10 7"/>
+    <circle cx="72" cy="54" r="28" fill="#6D5CE0"/><path d="M72 31l7 15 17 2-12 12 3 17-15-8-15 8 3-17-12-12 17-2Z" fill="#FFF"/>
+    <text x="120" y="66" font-size="31" font-weight="700">产出三件套：<tspan fill="#6D5CE0">手绘 SVG · 动画 HTML · 4K MP4</tspan></text>
+  </g>
+
+  <!-- ═══ ⑨ 底部标语 ═══ -->
+  <text class="fu" style="--d:9.4s" x="960" y="880" text-anchor="middle" font-size="30" font-weight="700">一次说清，四步出片</text>
+  <path class="draw-sm" style="--d:9.6s" d="M830 896q130 7 260 0" fill="none" stroke="#F2A65A" stroke-width="4" stroke-linecap="round"/>
+  <text class="fu sub" style="--d:9.8s" x="960" y="940" text-anchor="middle" font-size="16" letter-spacing="2.4">SKETCH · ANIMATE · POLISH · EXPORT</text>
+  <text class="fu mini" style="--d:10.0s" x="960" y="985" text-anchor="middle" font-size="14">兼容 Claude Code · Codex · AtomCode · Gitee &amp; GitHub 双平台开源</text>
+</svg>
+  <div class="legend">handdrawn-architecture-video · 四阶段流水线演示</div>
+</div>
+</body>
+</html>
