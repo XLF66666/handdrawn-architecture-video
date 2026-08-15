@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🎨 Handdrawn Architecture Video
+<img src="examples/preview/mosu_logo.png" width="90" alt="墨塑 logo">
+
+# Handdrawn Architecture Video
 
 **把技术图变成「手绘动画 4K 视频」的 AI Agent Skill**
 
