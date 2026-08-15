@@ -15,18 +15,32 @@ jobs:
   selfcheck:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: '3.12'
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '22'
 
-      - name: Run selfcheck
-        run: python scripts/selfcheck.py .
+      - name: Print environment & file inventory (diagnostics)
+        run: |
+          python --version
+          node --version
+          echo "--- git status ---"
+          git status --short
+          echo "--- scripts/ ---"
+          ls scripts/
+          echo "--- examples/ ---"
+          ls examples/
+
+      - name: Run selfcheck (full output)
+        run: |
+          python scripts/selfcheck.py .
+          echo "selfcheck_exit=$LASTEXITCODE"
+          exit $LASTEXITCODE
 
       - name: Verify capture.js syntax
         run: node --check scripts/capture.js
