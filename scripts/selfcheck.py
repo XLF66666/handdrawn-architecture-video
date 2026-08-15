@@ -20,6 +20,14 @@ import subprocess
 import sys
 import tempfile
 
+# CI（GitHub Actions windows-latest）上 Python 默认 stdout 是 cp1252，
+# 打印中文会 UnicodeEncodeError 崩溃——强制 UTF-8（本地/CI 均兼容）。
+for _stream in (sys.stdout, sys.stderr):
+    try:
+        _stream.reconfigure(encoding='utf-8', errors='replace')
+    except (AttributeError, ValueError):
+        pass
+
 REQUIRED = [
     'SKILL.md',
     'README.md',

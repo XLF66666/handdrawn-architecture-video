@@ -37,6 +37,8 @@ jobs:
           ls examples/
 
       - name: Run selfcheck (full output)
+        env:
+          PYTHONIOENCODING: utf-8
         run: |
           python scripts/selfcheck.py . 2>&1 | tee selfcheck.log
           echo "selfcheck_exit=$LASTEXITCODE"
