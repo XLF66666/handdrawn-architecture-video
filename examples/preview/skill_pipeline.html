@@ -90,9 +90,12 @@
     <text x="18" y="90" class="body">logo 内嵌 base64 · 自包含</text>
   </g>
 
-  <!-- ═══ ④ 箭头 1→2（描线） ═══ -->
-  <path class="draw-sm" style="--d:3.9s" d="M496 480C511 472 524 472 539 480" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
-  <path class="fade" style="--d:4.2s" d="M539 480l-12-9M539 480l-12 9" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+  <!-- ═══ ④ 箭头 1→2（加长指向下一元素 + 流动小点循环） ═══ -->
+  <path class="draw-sm" style="--d:3.9s" d="M496 480C580 468 660 468 736 480" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+  <path class="fade" style="--d:4.2s" d="M736 480l-12-9M736 480l-12 9" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
+  <circle class="dot" style="--d:4.0s" cx="498" cy="479" r="7" fill="#6D5CE0">
+    <animateMotion dur="0.8s" begin="4.0s" repeatCount="indefinite" path="M0 0 C84 -12 164 -12 238 0"/>
+  </circle>
 
   <!-- ═══ ⑤ 阶段2：动画 HTML（下浮上入） ═══ -->
   <g class="up" style="--d:4.5s" transform="rotate(.3 962 480)" filter="url(#shadow)">
@@ -113,9 +116,12 @@
     <text x="18" y="90" class="body">时间轴 --d 精确控制</text>
   </g>
 
-  <!-- ═══ ⑥ 箭头 2→3（描线） ═══ -->
-  <path class="draw-sm" style="--d:6.2s" d="M1178 480C1193 472 1206 472 1221 480" fill="none" stroke="#3E6BD8" stroke-width="4" stroke-linecap="round"/>
-  <path class="fade" style="--d:6.5s" d="M1221 480l-12-9M1221 480l-12 9" fill="none" stroke="#3E6BD8" stroke-width="4" stroke-linecap="round"/>
+  <!-- ═══ ⑥ 箭头 2→3（加长指向下一元素 + 流动小点循环） ═══ -->
+  <path class="draw-sm" style="--d:6.2s" d="M1178 480C1262 468 1342 468 1418 480" fill="none" stroke="#3E6BD8" stroke-width="4" stroke-linecap="round"/>
+  <path class="fade" style="--d:6.5s" d="M1418 480l-12-9M1418 480l-12 9" fill="none" stroke="#3E6BD8" stroke-width="4" stroke-linecap="round"/>
+  <circle class="dot" style="--d:6.3s" cx="1180" cy="479" r="7" fill="#3E6BD8">
+    <animateMotion dur="0.8s" begin="6.3s" repeatCount="indefinite" path="M0 0 C84 -12 164 -12 238 0"/>
+  </circle>
 
   <!-- ═══ ⑦ 阶段3：细节调整（下浮上入） ═══ -->
   <g class="up" style="--d:6.8s" transform="rotate(-.3 1644 480)" filter="url(#shadow)">
