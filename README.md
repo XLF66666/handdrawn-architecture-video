@@ -21,6 +21,41 @@
 
 3. agent 会按 `SKILL.md` 的四阶段工作流执行，产出 `架构图_4K.mp4`。
 
+## 唤醒方式
+
+skill 安装后会被 agent **自动加载**，无需任何命令；触发方式有两种：
+
+### 1. 自动匹配（推荐）
+
+agent 根据 `SKILL.md` 的 `description` 自动识别，以下类型请求会自动命中本 skill：
+
+- 「把这张 SVG 重绘为**手绘风格** / 手绘留白版」
+- 「生成**动画 HTML**，模块依次出现、箭头有描线/圆点流动动画」
+- 「导出 **4K MP4** / 高帧率视频」
+- 「架构图 / 创新卡片 / 比赛视频素材」
+- 「从这段**描述 / MD 文档**生成手绘架构图视频」（阶段 0）
+
+### 2. 显式点名
+
+直接指定 skill 名称，确保被调用：
+
+> 「用 **handdrawn-architecture-video** 处理这个 SVG」
+> 「调用手绘动画 skill 走完整流程」
+
+### 安装到其他机器
+
+```bash
+git clone https://gitee.com/xie-linfeng-666/handdrawn-architecture-video.git
+# 将 handdrawn-architecture-video/ 目录放入目标 agent 的 skills 路径（见上表）
+```
+
+### 自检确认安装成功
+
+```bash
+cd handdrawn-architecture-video
+python scripts/selfcheck.py .    # 一键自检：结构/frontmatter/脚本语法/HTML 坑检测
+```
+
 ## 四阶段工作流
 
 | 阶段 | 输入 → 输出 | 规范 |
