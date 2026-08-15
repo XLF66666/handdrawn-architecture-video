@@ -38,8 +38,9 @@ jobs:
 
       - name: Run selfcheck (full output)
         run: |
-          python scripts/selfcheck.py .
+          python scripts/selfcheck.py . 2>&1 | tee selfcheck.log
           echo "selfcheck_exit=$LASTEXITCODE"
+          if ($LASTEXITCODE -ne 0) { Get-Content selfcheck.log | ForEach-Object { echo "::error::$($_)" } }
           exit $LASTEXITCODE
 
       - name: Verify capture.js syntax
