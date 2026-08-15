@@ -42,6 +42,7 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
 2. 动画基元：`.draw/.draw-sm`（描线）、`.fillin`（填充淡入）、`.fu`（淡入上浮 12px）、`.up`（大卡下浮上入 40px）、`.fade`（纯淡入）、`.dot`（圆点+SMIL `animateMotion`）。
 3. 出场逻辑：**模块串行**——前一个模块完全出现后，有箭头先出箭头（描线+圆点流动），再出下一个；无箭头按逻辑衔接。用 `--d:X.XXs` 控制延迟。
 4. 箭头动画：主线箭头 4 条 + 反馈回路 1 条，全部「描线 + 圆点沿路径流动」（`<circle class="dot">` + `<animateMotion dur begin repeatCount="indefinite">`，圆点默认一直循环流动，无需刷新重播）。
+   **时序严格约束**：圆点出现/淡入（CSS `--d`）与流动开始（SMIL `begin`）均不得早于前一条箭头描线完成（draw/draw-sm `--d + 0.7s`），且 `begin` 不得早于目标元素完全出现（up `--d + 0.6s` / fu `--d + 0.5s`）——顺序固定为「箭头描线 → 目标出现 → 圆点流动」；`python scripts/verify_animation.py` 自动校验（检查项 5）。
 5. 关键坑（务必遵守，否则元素错位/遮挡/颜色丢失）：
    - **CSS `transform` 会覆盖 SVG `transform="translate(...)"` 定位**：动画类 keyframes 只用独立属性 `translate`/`opacity`/`stroke-dashoffset`，禁止 `transform:`。
    - **`stroke-dasharray` 必须 ≥ 最大框周长**（外舞台主框 5240/虚线框 5176 → 用 5400），否则动画前框线提前露出。
