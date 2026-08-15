@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>墨塑 APP · 系统架构图（手绘动画版）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html, body { width:100%; height:100%; background:#FBF7EF; overflow:hidden; }
+  body { display:flex; align-items:center; justify-content:center; font-family:"Kaiti SC","KaiTi","STKaiti","Segoe Print",cursive; }
+  .stage { position:relative; width:min(100vw, calc(100vh * 1.7778)); }
+  svg { width:100%; height:auto; display:block; }
+
+  /* ---- 动画基元 ---- */
+  /* dasharray 需 ≥ 最大框周长(外舞台主框 5240 / 虚线框 5176)，否则动画前框线提前露出 */
+  .draw { stroke-dasharray:5400; stroke-dashoffset:5400; animation:draw .9s ease-in-out var(--d,0s) forwards; }
+  @keyframes draw { to { stroke-dashoffset:0; } }
+  .draw-sm { stroke-dasharray:5400; stroke-dashoffset:5400; animation:draw .7s ease-in-out var(--d,0s) forwards; }
+  .fillin { opacity:0; animation:fillin .5s ease-out var(--d,0s) forwards; }
+  @keyframes fillin { to { opacity:1; } }
+  .fu { opacity:0; animation:fu .5s ease-out var(--d,0s) forwards; }
+  @keyframes fu { from { opacity:0; translate:0 12px; } to { opacity:1; translate:0 0; } }
+  .fade { opacity:0; animation:fade .5s ease-out var(--d,0s) forwards; }
+  @keyframes fade { to { opacity:1; } }
+  .dot { opacity:0; animation:dotIn .3s linear var(--d,0s) forwards; }
+  @keyframes dotIn { to { opacity:1; } }
+
+  text { font-family:"Kaiti SC","KaiTi","STKaiti","Segoe Print",cursive; }
+  .w{fill:#2E2A45}.m{fill:#6E6784}.d{fill:#9A91AE}.p{fill:#6D5CE0}.b{fill:#3E6BD8}.t{fill:#2E9E8B}.a{fill:#C77D1E}
+  .cap{font-size:15px;font-weight:600;letter-spacing:2px}.h1{font-size:40px;font-weight:600}.h2{font-size:25px;font-weight:600}
+  .title{font-size:20px;font-weight:600}.body{font-size:15px}.tiny{font-size:13px}.micro{font-size:12px}
+
+  .legend { position:absolute; left:12px; bottom:10px; font-size:13px; color:#9a8fae; user-select:none; }
+  .loop-note { position:absolute; right:12px; bottom:10px; font-size:13px; color:#b4a9c9; user-select:none; }
+</style>
+</head>
+<body>
+<div class="stage">
+<svg viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+  <!-- 纸面背景 + 噪点（常显） -->
+  <rect width="1920" height="1080" fill="#FBF7EF"/>
+  <g fill="#E9E0CD" opacity="0.5">
+    <circle cx="90" cy="120" r="3"/><circle cx="420" cy="60" r="2.5"/><circle cx="960" cy="40" r="3"/><circle cx="1500" cy="90" r="2.5"/>
+    <circle cx="1860" cy="200" r="3"/><circle cx="60" cy="520" r="2.5"/><circle cx="1890" cy="700" r="2.5"/><circle cx="120" cy="900" r="3"/>
+    <circle cx="1800" cy="1000" r="3"/><circle cx="500" cy="1030" r="2.5"/><circle cx="1400" cy="1010" r="2.5"/><circle cx="1880" cy="420" r="2.5"/>
+    <circle cx="80" cy="250" r="2.5"/><circle cx="1830" cy="560" r="3"/>
+  </g>
+
+  <!-- 角落手绘装饰 -->
+  <g class="fade" style="--d:.4s" fill="none" stroke="#D8CDB8" stroke-width="3" stroke-linecap="round">
+    <path d="M64 1018 Q 80 1006 96 1018 M 96 1018 Q 112 1030 128 1018"/>
+    <path d="M1792 54 Q 1810 42 1828 54 M 1828 54 Q 1846 66 1864 54"/>
+  </g>
+
+  <!-- ═══ ① Header ═══ -->
+  <image class="fade" style="--d:.3s" x="80" y="48" width="68" height="72" href="mosu_logo.png"/>
+  <text class="fu w h1" style="--d:.5s" x="164" y="85">墨塑 <tspan letter-spacing="5" fill="#6D5CE0">MORPHEUS</tspan></text>
+  <path class="draw-sm" style="--d:.7s" d="M168 96 Q 260 104 380 95 T 620 95" fill="none" stroke="#F2A65A" stroke-width="5" stroke-linecap="round"/>
+  <text class="fu m" style="--d:.9s" x="164" y="126" font-size="18" letter-spacing="1.6">AI 叙事生产系统 · 总体架构</text>
+  <g class="fu" style="--d:1.1s" transform="translate(1440 56) rotate(1.2)">
+    <rect width="400" height="54" rx="10" fill="#FFFFFF" stroke="#3A3650" stroke-width="3"/>
+    <rect x="5" y="5" width="390" height="44" rx="7" fill="none" stroke="#B9ACF2" stroke-width="1.5" stroke-dasharray="7 6"/>
+    <circle cx="30" cy="27" r="8" fill="#7C6BF2" opacity=".15"/>
+    <text x="48" y="33" class="p" font-size="15" font-weight="600">从创作想法到多模态完整作品</text>
+  </g>
+
+  <!-- ═══ ② 外舞台手绘框 ═══ -->
+  <g class="draw" style="--d:1.3s">
+    <rect x="80" y="148" width="1760" height="860" rx="26" fill="#FFFFFF" fill-opacity=".6" stroke="#3A3650" stroke-width="3.5"/>
+    <rect x="88" y="156" width="1744" height="844" rx="20" fill="none" stroke="#C9BFE8" stroke-width="1.5" stroke-dasharray="10 8" class="draw-sm" style="--d:1.9s"/>
+  </g>
+
+  <!-- ═══ ③ 01 创作入口 ═══ -->
+  <g transform="translate(110 176) rotate(-0.3)">
+    <rect width="1700" height="94" rx="18" fill="#FFFFFF" stroke="#3A3650" stroke-width="3" class="fillin" style="--d:2.1s"/>
+    <rect width="1700" height="94" rx="18" fill="none" stroke="#3A3650" stroke-width="3" class="draw" style="--d:2.0s"/>
+    <path class="fillin" style="--d:2.3s" d="M14 20 Q 22 47 14 74 Q 6 47 14 20 Z" fill="#7C6BF2" fill-opacity=".85"/>
+    <rect x="110" y="12" width="1500" height="70" rx="12" fill="none" stroke="#E3D9F5" stroke-width="1.5" stroke-dasharray="8 7" class="draw-sm" style="--d:2.6s"/>
+  </g>
+  <text class="fu p cap" style="--d:2.4s" x="150" y="212">01  ·  创作入口</text>
+  <text class="fu w title" style="--d:2.6s" x="150" y="245">创作者的想法与素材</text>
+  <line class="fade" style="--d:2.7s" x1="420" y1="196" x2="420" y2="250" stroke="#C9C0DE" stroke-width="2"/>
+
+  <g class="fu" style="--d:2.9s" transform="translate(477 193)">
+    <circle cx="27" cy="27" r="27" fill="#7C6BF2" opacity=".10"/>
+    <path d="M17 20H37M17 27H34M17 34H31" stroke="#6D5CE0" stroke-width="2.2" stroke-linecap="round"/>
+    <text x="68" y="25" class="w title">文字输入</text><text x="68" y="48" class="m body">自然语言描述创作目标</text>
+  </g>
+  <g class="fu" style="--d:3.1s" transform="translate(820 193)">
+    <circle cx="27" cy="27" r="27" fill="#3E6BD8" opacity=".10"/>
+    <rect x="22" y="13" width="10" height="23" rx="5" fill="none" stroke="#3E6BD8" stroke-width="2"/>
+    <path d="M16 30C16 41 38 41 38 30M27 42V48" fill="none" stroke="#3E6BD8" stroke-width="2" stroke-linecap="round"/>
+    <text x="68" y="25" class="w title">语音创作</text><text x="68" y="48" class="m body">实时 ASR 与通话式协作</text>
+  </g>
+  <g class="fu" style="--d:3.3s" transform="translate(1171 193)">
+    <circle cx="27" cy="27" r="27" fill="#2E9E8B" opacity=".10"/>
+    <path d="M18 17H34L40 23V39H18ZM33 17V24H40" fill="none" stroke="#2E9E8B" stroke-width="2" stroke-linejoin="round"/>
+    <text x="68" y="25" class="w title">多模态素材</text><text x="68" y="48" class="m body">图片、视频与文件附件</text>
+  </g>
+  <g class="fu" style="--d:3.5s" transform="translate(1531 193)">
+    <circle cx="27" cy="27" r="27" fill="#C77D1E" opacity=".10"/>
+    <path d="M17 19H37V38H17ZM21 23H33M21 28H33M21 33H29" fill="none" stroke="#C77D1E" stroke-width="2" stroke-linecap="round"/>
+    <text x="68" y="25" class="w title">任务确认</text><text x="68" y="48" class="m body">确认、修改或继续执行</text>
+  </g>
+
+  <!-- ═══ ④ 左列 02 移动端体验层 ═══ -->
+  <g transform="translate(110 304) rotate(-0.4)">
+    <rect width="305" height="468" rx="20" fill="#EFF4FF" stroke="#3E6BD8" stroke-width="3" class="fillin" style="--d:4.4s"/>
+    <rect width="305" height="468" rx="20" fill="none" stroke="#3E6BD8" stroke-width="3" class="draw" style="--d:4.2s"/>
+    <rect x="8" y="8" width="289" height="452" rx="15" fill="none" stroke="#A9C2F0" stroke-width="1.5" stroke-dasharray="8 7" class="draw-sm" style="--d:4.6s"/>
+  </g>
+  <text class="fu b cap" style="--d:4.5s" x="144" y="345">02  移动端体验层</text>
+  <text class="fu w h2" style="--d:4.7s" x="144" y="378">Flutter APP</text>
+  <text class="fu m body" style="--d:4.9s" x="144" y="405">统一承载创作、预览与任务反馈</text>
+  <g class="fu" style="--d:5.2s" transform="translate(137 436) rotate(0.5)">
+    <rect width="250" height="76" rx="13" fill="#FFFFFF" stroke="#3E6BD8" stroke-width="2.5"/>
+    <circle cx="31" cy="38" r="17" fill="#3E6BD8" opacity=".10"/><path d="M23 32H39M23 38H36M23 44H34" stroke="#3E6BD8" stroke-width="2" stroke-linecap="round"/>
+    <text x="60" y="31" class="w title">创作工作台</text><text x="60" y="54" class="m tiny">作品 · 会话 · 各阶段页面</text>
+  </g>
+  <g class="fu" style="--d:5.5s" transform="translate(137 525) rotate(-0.6)">
+    <rect width="250" height="76" rx="13" fill="#FFFFFF" stroke="#3E6BD8" stroke-width="2.5"/>
+    <circle cx="31" cy="38" r="17" fill="#3E6BD8" opacity=".10"/><path d="M22 29H40V43H29L23 49V43H22Z" fill="none" stroke="#3E6BD8" stroke-width="2" stroke-linejoin="round"/>
+    <text x="60" y="31" class="w title">通话式协作</text><text x="60" y="54" class="m tiny">语音 / 键盘 / 附件输入</text>
+  </g>
+  <g class="fu" style="--d:5.8s" transform="translate(137 614) rotate(0.4)">
+    <rect width="250" height="76" rx="13" fill="#FFFFFF" stroke="#3E6BD8" stroke-width="2.5"/>
+    <circle cx="31" cy="38" r="17" fill="#3E6BD8" opacity=".10"/><path d="M22 39L28 45L41 31" fill="none" stroke="#3E6BD8" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="60" y="31" class="w title">任务观察</text><text x="60" y="54" class="m tiny">进度 · 状态 · 结果刷新</text>
+  </g>
+  <g class="fu" style="--d:6.1s" transform="translate(137 705)">
+    <rect width="250" height="40" rx="10" fill="#3E6BD8" opacity=".10"/>
+    <text x="125" y="25" class="b tiny" text-anchor="middle">WorkApiService · Session Service</text>
+  </g>
+
+  <!-- ═══ ⑤ 中列主体 ═══ -->
+  <g transform="translate(450 304) rotate(0.3)">
+    <rect width="955" height="468" rx="20" fill="#F4F1FF" stroke="#6D5CE0" stroke-width="3" class="fillin" style="--d:7.1s"/>
+    <rect width="955" height="468" rx="20" fill="none" stroke="#6D5CE0" stroke-width="3" class="draw" style="--d:6.9s"/>
+    <rect x="8" y="8" width="939" height="452" rx="15" fill="none" stroke="#C9BFE8" stroke-width="1.5" stroke-dasharray="9 8" class="draw-sm" style="--d:7.3s"/>
+  </g>
+
+  <!-- ═══ ⑥ 03 接入、API 与安全层 ═══ -->
+  <text class="fu p cap" style="--d:7.2s" x="482" y="345">03  接入、API 与安全层</text>
+  <g class="fu" style="--d:7.5s" transform="translate(482 361) rotate(-0.5)">
+    <rect width="278" height="74" rx="13" fill="#FFFFFF" stroke="#6D5CE0" stroke-width="2.5"/>
+    <text x="22" y="31" class="w title">FastAPI /api/v1</text><text x="22" y="55" class="m tiny">REST · SSE · WebSocket</text>
+  </g>
+  <g class="fu" style="--d:7.8s" transform="translate(774 361) rotate(0.4)">
+    <rect width="278" height="74" rx="13" fill="#FFFFFF" stroke="#6D5CE0" stroke-width="2.5"/>
+    <text x="22" y="31" class="w title">鉴权与媒体安全</text><text x="22" y="55" class="m tiny">JWT · 所有权校验 · 短期令牌</text>
+  </g>
+  <g class="fu" style="--d:8.1s" transform="translate(1066 361) rotate(-0.4)">
+    <rect width="307" height="74" rx="13" fill="#FFFFFF" stroke="#6D5CE0" stroke-width="2.5"/>
+    <text x="22" y="31" class="w title">领域 API 路由</text><text x="22" y="55" class="m tiny">作品 · 会话 · 内容 · 媒体 · 导出</text>
+  </g>
+
+  <!-- ═══ ⑦ 04 智能体编排中枢 ═══ -->
+  <g transform="translate(482 462) rotate(-0.3)">
+    <rect width="891" height="136" rx="18" fill="#EFEAFE" stroke="#6D5CE0" stroke-width="3" class="fillin" style="--d:8.9s"/>
+    <rect width="891" height="136" rx="18" fill="none" stroke="#6D5CE0" stroke-width="3" class="draw" style="--d:8.8s"/>
+    <rect x="7" y="7" width="877" height="122" rx="14" fill="none" stroke="#B9ACF2" stroke-width="1.5" stroke-dasharray="9 8" class="draw-sm" style="--d:9.1s"/>
+  </g>
+  <text class="fu p cap" style="--d:8.9s" x="510" y="498">04  智能体编排中枢</text>
+  <text class="fu w h2" style="--d:9.2s" x="510" y="531">理解意图 → 制订计划 → 校验确认 → 调用工具 → 返回结果</text>
+  <g transform="translate(510 554)">
+    <rect class="fade" style="--d:9.5s" width="190" height="30" rx="10" fill="#7C6BF2" fill-opacity=".12"/><text class="fade p tiny" style="--d:9.6s" x="95" y="20" text-anchor="middle">SessionService · 总控 Agent</text>
+    <rect class="fade" style="--d:9.7s" x="205" width="188" height="30" rx="10" fill="#6D5CE0" fill-opacity=".12"/><text class="fade tiny" style="--d:9.8s" x="299" y="20" fill="#5A48D8" text-anchor="middle">WorkPlan · 计划与依赖</text>
+    <rect class="fade" style="--d:9.9s" x="408" width="188" height="30" rx="10" fill="#7C6BF2" fill-opacity=".12"/><text class="fade p tiny" style="--d:10.0s" x="502" y="20" text-anchor="middle">AgentTask · 后台执行</text>
+    <rect class="fade" style="--d:10.1s" x="611" width="242" height="30" rx="10" fill="#6D5CE0" fill-opacity=".12"/><text class="fade tiny" style="--d:10.2s" x="732" y="20" fill="#5A48D8" text-anchor="middle">状态修复 · 重试 · 质量检查</text>
+  </g>
+
+  <!-- ═══ ⑧ 05 创作领域服务与工具链 ═══ -->
+  <text class="fu t cap" style="--d:10.9s" x="482" y="638">05  创作领域服务与工具链</text>
+  <g class="fu" style="--d:11.2s" transform="translate(482 657) rotate(0.6)">
+    <rect width="160" height="82" rx="14" fill="#E9F7F3" stroke="#2E9E8B" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#2E9E8B" opacity=".12"/><text x="27" y="32" class="t body" text-anchor="middle">1</text>
+    <text x="51" y="31" class="w title">蓝图</text><text x="18" y="60" class="m tiny">世界观 · 角色 · 大纲</text>
+  </g>
+  <path class="fade" style="--d:11.4s" d="M650 698 L668 698 M668 698 L663 693 M668 698 L663 703" fill="none" stroke="#2E9E8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="fu" style="--d:11.6s" transform="translate(684 657) rotate(-0.5)">
+    <rect width="160" height="82" rx="14" fill="#E9F7F3" stroke="#2E9E8B" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#2E9E8B" opacity=".12"/><text x="27" y="32" class="t body" text-anchor="middle">2</text>
+    <text x="51" y="31" class="w title">正文</text><text x="18" y="60" class="m tiny">生成 · 续写 · 润色</text>
+  </g>
+  <path class="fade" style="--d:11.8s" d="M852 698 L870 698 M870 698 L865 693 M870 698 L865 703" fill="none" stroke="#2E9E8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="fu" style="--d:12.0s" transform="translate(886 657) rotate(0.5)">
+    <rect width="160" height="82" rx="14" fill="#E9F7F3" stroke="#2E9E8B" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#2E9E8B" opacity=".12"/><text x="27" y="32" class="t body" text-anchor="middle">3</text>
+    <text x="51" y="31" class="w title">剧本</text><text x="18" y="60" class="m tiny">分场 · 对白 · 旁白</text>
+  </g>
+  <path class="fade" style="--d:12.2s" d="M1054 698 L1072 698 M1072 698 L1067 693 M1072 698 L1067 703" fill="none" stroke="#2E9E8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="fu" style="--d:12.4s" transform="translate(1088 657) rotate(-0.6)">
+    <rect width="130" height="82" rx="14" fill="#E9F7F3" stroke="#2E9E8B" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#2E9E8B" opacity=".12"/><text x="27" y="32" class="t body" text-anchor="middle">4</text>
+    <text x="51" y="31" class="w title">音频</text><text x="18" y="60" class="m tiny">角色 · 多轨</text>
+  </g>
+  <path class="fade" style="--d:12.6s" d="M1226 698 L1244 698 M1244 698 L1239 693 M1244 698 L1239 703" fill="none" stroke="#2E9E8B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g class="fu" style="--d:12.8s" transform="translate(1260 657) rotate(0.4)">
+    <rect width="113" height="82" rx="14" fill="#E9F7F3" stroke="#2E9E8B" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#2E9E8B" opacity=".12"/><text x="27" y="32" class="t body" text-anchor="middle">5</text>
+    <text x="51" y="31" class="w title">漫剧</text><text x="18" y="60" class="m tiny">场景 · 合成</text>
+  </g>
+
+  <!-- ═══ ⑨ 右列 06 AI 与媒体能力边界 ═══ -->
+  <g transform="translate(1440 304) rotate(0.4)">
+    <rect width="370" height="468" rx="20" fill="#FFF6E8" stroke="#C77D1E" stroke-width="3" class="fillin" style="--d:13.9s"/>
+    <rect width="370" height="468" rx="20" fill="none" stroke="#C77D1E" stroke-width="3" class="draw" style="--d:13.8s"/>
+    <rect x="8" y="8" width="354" height="452" rx="15" fill="none" stroke="#EBC38F" stroke-width="1.5" stroke-dasharray="8 7" class="draw-sm" style="--d:14.1s"/>
+  </g>
+  <text class="fu a cap" style="--d:14.0s" x="1474" y="345">06  AI 与媒体能力边界</text>
+  <text class="fu w h2" style="--d:14.2s" x="1474" y="378">vivo AI 能力</text>
+  <text class="fu m body" style="--d:14.4s" x="1474" y="405">模型生成与本地媒体后处理协同</text>
+  <g class="fu" style="--d:14.7s" transform="translate(1467 430) rotate(-0.5)">
+    <rect width="316" height="64" rx="12" fill="#FFFFFF" stroke="#C77D1E" stroke-width="2.5"/>
+    <circle cx="30" cy="32" r="16" fill="#C77D1E" opacity=".12"/><text x="30" y="38" class="a" font-size="18" text-anchor="middle">控</text>
+    <text x="58" y="27" class="w title">会话控制模型</text><text x="58" y="49" class="m tiny">意图、计划与工具调用 JSON</text>
+  </g>
+  <g class="fu" style="--d:15.0s" transform="translate(1467 506) rotate(0.5)">
+    <rect width="316" height="64" rx="12" fill="#FFFFFF" stroke="#C77D1E" stroke-width="2.5"/>
+    <circle cx="30" cy="32" r="16" fill="#C77D1E" opacity=".12"/><text x="30" y="38" class="a" font-size="18" text-anchor="middle">文</text>
+    <text x="58" y="27" class="w title">内容文本模型</text><text x="58" y="49" class="m tiny">叙事、正文、剧本与优化</text>
+  </g>
+  <g class="fu" style="--d:15.3s" transform="translate(1467 582) rotate(-0.4)">
+    <rect width="316" height="64" rx="12" fill="#FFFFFF" stroke="#C77D1E" stroke-width="2.5"/>
+    <circle cx="30" cy="32" r="16" fill="#C77D1E" opacity=".12"/><text x="30" y="38" class="a" font-size="18" text-anchor="middle">声</text>
+    <text x="58" y="27" class="w title">实时 ASR / TTS</text><text x="58" y="49" class="m tiny">语音输入、助手回复与角色配音</text>
+  </g>
+  <g class="fu" style="--d:15.6s" transform="translate(1467 658) rotate(0.6)">
+    <rect width="316" height="64" rx="12" fill="#FFFFFF" stroke="#C77D1E" stroke-width="2.5"/>
+    <circle cx="30" cy="32" r="16" fill="#C77D1E" opacity=".12"/><text x="30" y="38" class="a" font-size="18" text-anchor="middle">影</text>
+    <text x="58" y="27" class="w title">图像 / 视频 / 后处理</text><text x="58" y="49" class="m tiny">场景生成、字幕、混音与合成</text>
+  </g>
+  <text class="fade d micro" style="--d:15.9s" x="1625" y="753" text-anchor="middle">生成结果保留 Provider 与质量证据</text>
+
+  <!-- ═══ ⑩ 列间手绘连接箭头 + 流动圆点 ═══ -->
+  <path class="fade" style="--d:6.5s" d="M421 532 L438 532 M438 532 L433 527 M438 532 L433 537" fill="none" stroke="#3E6BD8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="dot" style="--d:6.6s" cx="423" cy="532" r="6" fill="#3E6BD8">
+    <animateMotion dur="0.6s" begin="6.65s" repeatCount="1" path="M0 0 L15 0"/>
+  </circle>
+  <path class="fade" style="--d:13.5s" d="M1409 532 L1426 532 M1426 532 L1421 527 M1426 532 L1421 537" fill="none" stroke="#7C6BF2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle class="dot" style="--d:13.6s" cx="1411" cy="532" r="6" fill="#7C6BF2">
+    <animateMotion dur="0.6s" begin="13.65s" repeatCount="1" path="M0 0 L15 0"/>
+  </circle>
+  <path class="draw-sm" style="--d:16.6s" d="M1433 555 C1418 555 1419 681 1407 681" fill="none" stroke="#7C6BF2" stroke-opacity=".6" stroke-width="2.5" stroke-dasharray="7 7"/>
+  <path class="fade" style="--d:16.9s" d="M1407 681 L1413 675 M1407 681 L1411 687" fill="none" stroke="#7C6BF2" stroke-opacity=".6" stroke-width="2.5" stroke-linecap="round"/>
+  <circle class="dot" style="--d:16.7s" cx="1431" cy="556" r="6" fill="#7C6BF2">
+    <animateMotion dur="1.2s" begin="16.75s" repeatCount="1" path="M0 0 C -15 0 -14 124 -24 124"/>
+  </circle>
+
+  <!-- ═══ ⑪ 07 作品数据、任务状态与媒体资产 ═══ -->
+  <g transform="translate(110 803) rotate(0.2)">
+    <rect width="1700" height="132" rx="18" fill="#F6F2FA" stroke="#3A3650" stroke-width="3" class="fillin" style="--d:17.1s"/>
+    <rect width="1700" height="132" rx="18" fill="none" stroke="#3A3650" stroke-width="3" class="draw" style="--d:17.0s"/>
+    <rect x="110" y="12" width="1480" height="108" rx="12" fill="none" stroke="#D5CCE8" stroke-width="1.5" stroke-dasharray="9 8" class="draw-sm" style="--d:17.3s"/>
+  </g>
+  <text class="fu p cap" style="--d:17.2s" x="144" y="840">07  作品数据、任务状态与媒体资产</text>
+  <g class="fu" style="--d:17.5s" transform="translate(144 857) rotate(-0.4)">
+    <rect width="360" height="54" rx="11" fill="#FFFFFF" stroke="#7C6BF2" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#7C6BF2" opacity=".12"/>
+    <text x="50" y="23" class="w body" font-weight="600">作品事实</text><text x="50" y="42" class="m micro">Work · Blueprint · Chapter · Script</text>
+  </g>
+  <g class="fu" style="--d:17.8s" transform="translate(522 857) rotate(0.3)">
+    <rect width="392" height="54" rx="11" fill="#FFFFFF" stroke="#6D5CE0" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#6D5CE0" opacity=".14"/>
+    <text x="50" y="23" class="w body" font-weight="600">会话与执行状态</text><text x="50" y="42" class="m micro">WorkSession · WorkPlan · AgentTask · Event</text>
+  </g>
+  <g class="fu" style="--d:18.1s" transform="translate(932 857) rotate(-0.5)">
+    <rect width="350" height="54" rx="11" fill="#FFFFFF" stroke="#2E9E8B" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#2E9E8B" opacity=".12"/>
+    <text x="50" y="23" class="w body" font-weight="600">多媒体资产</text><text x="50" y="42" class="m micro">Audio · Video · Attachment · Export</text>
+  </g>
+  <g class="fu" style="--d:18.4s" transform="translate(1300 857) rotate(0.4)">
+    <rect width="476" height="54" rx="11" fill="#FFFFFF" stroke="#C77D1E" stroke-width="2.5"/>
+    <circle cx="27" cy="27" r="13" fill="#C77D1E" opacity=".12"/>
+    <text x="50" y="23" class="w body" font-weight="600">持久化与恢复</text><text x="50" y="42" class="m micro">SQLAlchemy · SQLite / PostgreSQL · 受保护媒体存储</text>
+  </g>
+  <path class="draw-sm" style="--d:18.7s" d="M1772 803 C1822 786 1822 305 1775 284" fill="none" stroke="#7D719A" stroke-width="2.5" stroke-dasharray="7 8"/>
+  <path class="fade" style="--d:19.0s" d="M1775 284 L1782 291 M1775 284 L1770 291" fill="none" stroke="#7D719A" stroke-width="2.5" stroke-linecap="round"/>
+  <text class="fade d micro" style="--d:19.1s" x="1824" y="548" text-anchor="middle" transform="rotate(-90 1824 548)">状态与产物持续回传</text>
+
+  <!-- ═══ ⑫ 技术底座 ═══ -->
+  <g transform="translate(110 950) rotate(-0.2)">
+    <rect width="1700" height="40" rx="12" fill="#FFFFFF" stroke="#3A3650" stroke-width="2.5" class="fillin" style="--d:20.0s"/>
+    <rect width="1700" height="40" rx="12" fill="none" stroke="#3A3650" stroke-width="2.5" class="draw" style="--d:19.9s"/>
+    <rect x="6" y="6" width="1688" height="28" rx="9" fill="none" stroke="#E3D9F5" stroke-width="1.5" stroke-dasharray="8 7" class="draw-sm" style="--d:20.2s"/>
+  </g>
+  <text class="fu p tiny" style="--d:20.1s" x="144" y="975">技术底座</text>
+  <line class="fade" style="--d:20.2s" x1="234" y1="959" x2="234" y2="981" stroke="#C9C0DE" stroke-width="2"/>
+  <g class="fu" style="--d:20.3s" transform="translate(256 958)"><circle cx="0" cy="12" r="6" fill="#60A5FA"/><text x="16" y="18" class="w tiny">Flutter</text></g>
+  <g class="fu" style="--d:20.5s" transform="translate(404 958)"><circle cx="0" cy="12" r="6" fill="#A78BFA"/><text x="16" y="18" class="w tiny">FastAPI</text></g>
+  <g class="fu" style="--d:20.7s" transform="translate(554 958)"><circle cx="0" cy="12" r="6" fill="#5EEAD4"/><text x="16" y="18" class="w tiny">SQLAlchemy</text></g>
+  <g class="fu" style="--d:20.9s" transform="translate(744 958)"><circle cx="0" cy="12" r="6" fill="#60A5FA"/><text x="16" y="18" class="w tiny">PostgreSQL / SQLite</text></g>
+  <g class="fu" style="--d:21.1s" transform="translate(1019 958)"><circle cx="0" cy="12" r="6" fill="#A78BFA"/><text x="16" y="18" class="w tiny">私有媒体 / 可选 S3</text></g>
+  <g class="fu" style="--d:21.3s" transform="translate(1289 958)"><circle cx="0" cy="12" r="6" fill="#5EEAD4"/><text x="16" y="18" class="w tiny">Caddy · Docker Compose</text></g>
+  <g class="fu" style="--d:21.5s" transform="translate(1596 958)"><circle cx="0" cy="12" r="6" fill="#F5C77A"/><text x="16" y="18" class="w tiny">vivo AI</text></g>
+
+  <!-- ═══ ⑬ 底部流程文字 ═══ -->
+  <text class="fade d" style="--d:21.8s" x="960" y="1038" font-size="13" text-anchor="middle" letter-spacing="2">INPUT  →  AGENT ORCHESTRATION  →  CREATIVE PIPELINE  →  PERSISTENT WORK</text>
+</svg>
+  <div class="legend">墨塑 · 系统架构（手绘动画版）— 约 22 秒一轮</div>
+  <div class="loop-note">刷新页面重新播放</div>
+</div>
+</body>
+</html>

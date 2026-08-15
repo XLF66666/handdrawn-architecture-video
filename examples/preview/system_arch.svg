@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <title>墨塑 · 系统架构（手绘版）</title>
+  <!-- 纸面背景与噪点 -->
+  <rect width="1600" height="1000" fill="#FBF7EF"/>
+  <g fill="#E8DFCE" opacity="0.55">
+    <circle cx="120" cy="180" r="3"/><circle cx="410" cy="90" r="2.5"/><circle cx="900" cy="60" r="3"/>
+    <circle cx="1450" cy="150" r="2.5"/><circle cx="1520" cy="420" r="3"/><circle cx="90" cy="560" r="2.5"/>
+    <circle cx="1560" cy="700" r="2.5"/><circle cx="120" cy="860" r="3"/><circle cx="1480" cy="940" r="2.5"/>
+    <circle cx="640" cy="960" r="2.5"/><circle cx="60" cy="330" r="2.5"/><circle cx="1550" cy="250" r="3"/>
+  </g>
+
+  <!-- 标题 -->
+  <g transform="translate(88,88)">
+    <text x="0" y="0" font-family="'Kaiti SC','KaiTi','STKaiti','Segoe Print',cursive" font-size="46" font-weight="700" fill="#2E2A45">墨塑 · 系统架构</text>
+    <path d="M 6 14 Q 90 26 176 16 T 360 14" fill="none" stroke="#F2A65A" stroke-width="6" stroke-linecap="round"/>
+    <text x="212" y="34" font-family="'Kaiti SC','KaiTi',cursive" font-size="17" fill="#8A7FA8" transform="rotate(-2 212 34)">from idea to work</text>
+  </g>
+
+  <!-- 1. 用户的创作想法 -->
+  <g transform="translate(800,158) rotate(-0.8)">
+    <rect x="-248" y="-56" width="496" height="112" rx="40" fill="#FFFFFF" stroke="#4A4468" stroke-width="4"/>
+    <path d="M -212 -40 Q -150 -48 -92 -40" fill="none" stroke="#E3D9C2" stroke-width="2.5"/>
+    <text x="0" y="-8" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="34" font-weight="700" fill="#2E2A45">用户的创作想法</text>
+    <text x="0" y="26" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="20" fill="#7A7198">文字输入 / 语音输入</text>
+  </g>
+
+  <!-- 箭头 1 -->
+  <g stroke="#4A4468" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M 800 220 C 800 244, 800 248, 800 268"/>
+    <path d="M 800 268 L 788 250 M 800 268 L 812 250" stroke-width="3.5"/>
+  </g>
+
+  <!-- 2. 智能体调度层 -->
+  <g transform="translate(800,372) rotate(0.6)">
+    <rect x="-390" y="-112" width="780" height="224" rx="20" fill="#FFFFFF" stroke="#4A4468" stroke-width="4"/>
+    <rect x="-390" y="-112" width="780" height="224" rx="20" fill="none" stroke="#7C6BF2" stroke-width="2" stroke-dasharray="10 8" transform="translate(6,-6)"/>
+    <text x="-338" y="-70" font-family="'Kaiti SC','KaiTi',cursive" font-size="28" font-weight="700" fill="#5A4BC8">智能体调度层</text>
+    <path d="M -338 -58 Q -240 -66 -120 -58" fill="none" stroke="#7C6BF2" stroke-width="3" stroke-linecap="round"/>
+    <!-- 四个步骤 chips -->
+    <g transform="translate(-295,8) rotate(-0.7)">
+      <rect x="-70" y="-32" width="140" height="64" rx="14" fill="#F1EDFF" stroke="#7C6BF2" stroke-width="3"/>
+      <text y="8" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="22" font-weight="600" fill="#4A3FA8">理解需求</text>
+    </g>
+    <g transform="translate(-115,8) rotate(0.9)">
+      <rect x="-70" y="-32" width="140" height="64" rx="14" fill="#F1EDFF" stroke="#7C6BF2" stroke-width="3"/>
+      <text y="8" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="22" font-weight="600" fill="#4A3FA8">制订计划</text>
+    </g>
+    <g transform="translate(65,8) rotate(-0.6)">
+      <rect x="-70" y="-32" width="140" height="64" rx="14" fill="#F1EDFF" stroke="#7C6BF2" stroke-width="3"/>
+      <text y="8" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="22" font-weight="600" fill="#4A3FA8">调用工具</text>
+    </g>
+    <g transform="translate(245,8) rotate(0.8)">
+      <rect x="-70" y="-32" width="140" height="64" rx="14" fill="#F1EDFF" stroke="#7C6BF2" stroke-width="3"/>
+      <text y="8" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="22" font-weight="600" fill="#4A3FA8">返回结果</text>
+    </g>
+    <!-- 小箭头 -->
+    <g stroke="#B3A6E8" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M -88 8 L -74 8"/><path d="M -74 8 L -70 2 M -74 8 L -70 14"/>
+      <path d="M 92 8 L 106 8"/><path d="M 106 8 L 110 2 M 106 8 L 110 14"/>
+      <path d="M 272 8 L 286 8"/><path d="M 286 8 L 290 2 M 286 8 L 290 14"/>
+    </g>
+  </g>
+
+  <!-- 箭头 2 -->
+  <g stroke="#4A4468" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M 800 488 C 800 508, 800 512, 800 528"/>
+    <path d="M 800 528 L 788 510 M 800 528 L 812 510" stroke-width="3.5"/>
+  </g>
+
+  <!-- 3. 创作工具链 -->
+  <g transform="translate(800,616) rotate(-0.5)">
+    <rect x="-410" y="-106" width="820" height="212" rx="20" fill="#FFFFFF" stroke="#4A4468" stroke-width="4"/>
+    <text x="-358" y="-64" font-family="'Kaiti SC','KaiTi',cursive" font-size="28" font-weight="700" fill="#2E6E5E">创作工具链</text>
+    <path d="M -358 -52 Q -260 -60 -130 -52" fill="none" stroke="#5FC7B5" stroke-width="3" stroke-linecap="round"/>
+    <!-- 五个节点 -->
+    <g transform="translate(-290,10) rotate(0.7)">
+      <rect x="-58" y="-34" width="116" height="68" rx="13" fill="#E9F8F4" stroke="#3FA98F" stroke-width="3"/>
+      <text y="9" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="24" font-weight="700" fill="#2E6E5E">蓝图</text>
+    </g>
+    <g transform="translate(-140,10) rotate(-0.8)">
+      <rect x="-58" y="-34" width="116" height="68" rx="13" fill="#E9F8F4" stroke="#3FA98F" stroke-width="3"/>
+      <text y="9" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="24" font-weight="700" fill="#2E6E5E">正文</text>
+    </g>
+    <g transform="translate(10,10) rotate(0.6)">
+      <rect x="-58" y="-34" width="116" height="68" rx="13" fill="#E9F8F4" stroke="#3FA98F" stroke-width="3"/>
+      <text y="9" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="24" font-weight="700" fill="#2E6E5E">剧本</text>
+    </g>
+    <g transform="translate(160,10) rotate(-0.6)">
+      <rect x="-58" y="-34" width="116" height="68" rx="13" fill="#E9F8F4" stroke="#3FA98F" stroke-width="3"/>
+      <text y="9" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="24" font-weight="700" fill="#2E6E5E">音频</text>
+    </g>
+    <g transform="translate(310,10) rotate(0.8)">
+      <rect x="-58" y="-34" width="116" height="68" rx="13" fill="#E9F8F4" stroke="#3FA98F" stroke-width="3"/>
+      <text y="9" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="24" font-weight="700" fill="#2E6E5E">漫剧</text>
+    </g>
+    <!-- 小箭头 -->
+    <g stroke="#9FD8CB" stroke-width="3" stroke-linecap="round" fill="none">
+      <path d="M -92 10 L -78 10"/><path d="M -78 10 L -74 4 M -78 10 L -74 16"/>
+      <path d="M 58 10 L 72 10"/><path d="M 72 10 L 76 4 M 72 10 L 76 16"/>
+      <path d="M 208 10 L 222 10"/><path d="M 222 10 L 226 4 M 222 10 L 226 16"/>
+      <path d="M 358 10 L 372 10"/><path d="M 372 10 L 376 4 M 372 10 L 376 16"/>
+    </g>
+  </g>
+
+  <!-- 箭头 3 -->
+  <g stroke="#4A4468" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M 800 726 C 800 748, 800 752, 800 770"/>
+    <path d="M 800 770 L 788 752 M 800 770 L 812 752" stroke-width="3.5"/>
+  </g>
+
+  <!-- 4. 作品数据与任务状态 -->
+  <g transform="translate(800,822) rotate(0.4)">
+    <rect x="-390" y="-54" width="780" height="108" rx="22" fill="#FFF4E3" stroke="#4A4468" stroke-width="4"/>
+    <rect x="-390" y="-54" width="780" height="108" rx="22" fill="none" stroke="#F2A65A" stroke-width="2" stroke-dasharray="9 9" transform="translate(-6,6)"/>
+    <text y="16" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="30" font-weight="700" fill="#8A5A1E">作品数据与任务状态</text>
+  </g>
+
+  <!-- 箭头 4 -->
+  <g stroke="#4A4468" stroke-width="4" stroke-linecap="round" fill="none">
+    <path d="M 800 878 C 800 894, 800 896, 800 908"/>
+    <path d="M 800 908 L 790 892 M 800 908 L 810 892" stroke-width="3.5"/>
+  </g>
+
+  <!-- 5. 技术底座 -->
+  <text x="800" y="932" text-anchor="middle" font-family="'Kaiti SC','KaiTi',cursive" font-size="20" fill="#8A7FA8">技术底座</text>
+  <g transform="translate(800,964) rotate(-0.4)">
+    <rect x="-500" y="-40" width="1000" height="80" rx="40" fill="#2E2A45" stroke="#4A4468" stroke-width="4"/>
+    <g font-family="'Segoe Print','Kaiti SC','KaiTi',cursive" font-size="25" font-weight="600" fill="#FFFFFF">
+      <text x="-330" y="8" text-anchor="middle">Flutter APP</text>
+      <text x="-90" y="8" text-anchor="middle">FastAPI 服务</text>
+      <text x="150" y="8" text-anchor="middle">作品数据</text>
+      <text x="390" y="8" text-anchor="middle">vivo AI 能力</text>
+    </g>
+    <g stroke="#6E6884" stroke-width="2.5">
+      <line x1="-210" y1="-18" x2="-210" y2="18"/>
+      <line x1="30" y1="-18" x2="30" y2="18"/>
+      <line x1="270" y1="-18" x2="270" y2="18"/>
+    </g>
+  </g>
+
+  <!-- 装饰手绘元素 -->
+  <g stroke="#D9CEB8" stroke-width="3" stroke-linecap="round" fill="none">
+    <path d="M 96 246 Q 110 238 124 246 M 124 246 Q 138 254 152 246"/>
+    <path d="M 1432 208 Q 1448 198 1464 208 M 1464 208 Q 1480 218 1496 208"/>
+    <path d="M 142 606 Q 160 596 178 606 M 178 606 Q 196 616 214 606"/>
+  </g>
+</svg>

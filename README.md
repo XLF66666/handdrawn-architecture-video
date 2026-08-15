@@ -55,6 +55,26 @@
 
 > 💡 演示素材均可直接在 `examples/preview/` 查看：`skill_pipeline.svg`（手绘源）、`skill_pipeline.html`（动画源，双击即播）、`skill_pipeline_4K.mp4`（4K 成片）。
 
+### 实战案例：系统架构图（手绘版）
+
+来自墨塑项目实战产出——同一流水线处理的深色科技风架构图：
+
+#### 动画演示（GIF，自动播放）
+
+![系统架构图手绘动画](examples/preview/system_arch_anim.gif)
+
+#### 手绘作品（SVG 直接渲染）
+
+![系统架构图手绘 SVG](examples/preview/system_arch.svg)
+
+#### 4K 视频帧（3840×2160）
+
+![系统架构图 4K 视频帧](examples/preview/system_arch_frame.png)
+
+#### 4K 视频演示（点击播放）
+
+[![▶ 点击播放系统架构图 4K 演示](examples/preview/system_arch_title.png)](examples/preview/system_arch_4K.mp4)
+
 ## 🎯 特性
 
 - **四阶段流水线**：SVG 手绘化 → 动画 HTML → 细节调整 → 4K 导出，每阶段独立可交付
