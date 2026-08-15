@@ -45,10 +45,10 @@
 <path class="draw-sm" style="--d:3.8s" d="M438 432C459 423 472 423 493 432" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
 <path class="fade" style="--d:4.1s" d="M493 432l-13-10M493 432l-13 10" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
 <circle class="dot" style="--d:3.85s" cx="440" cy="431" r="7" fill="#6D5CE0">
-  <animateMotion dur="0.7s" begin="3.9s" repeatCount="1" path="M0 0 C21 -9 34 -9 55 0"/>
+  <animateMotion dur="0.7s" begin="3.9s" repeatCount="indefinite" path="M0 0 C21 -9 34 -9 55 0"/>
 </circle>
 ```
-约束：圆点 CSS `--d` ≤ SMIL `begin`（先出现再流动）；`animateMotion` 的 `path` 与箭头路径方向一致；`repeatCount="1"` 单次（刷新重播）。
+约束：圆点 CSS `--d` ≤ SMIL `begin`（先出现再流动）；`animateMotion` 的 `path` 与箭头路径方向一致；`repeatCount="indefinite"` 默认一直循环流动（无需刷新重播）。
 
 ## 不可违背的坑（踩过全部修复）
 
