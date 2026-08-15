@@ -45,11 +45,11 @@
 ```html
 <path class="draw-sm" style="--d:3.8s" d="M438 432C459 423 472 423 493 432" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
 <path class="fade" style="--d:4.1s" d="M493 432l-13-10M493 432l-13 10" fill="none" stroke="#6D5CE0" stroke-width="4" stroke-linecap="round"/>
-<circle class="dot" style="--d:3.85s" cx="440" cy="431" r="7" fill="#6D5CE0">
-  <animateMotion dur="0.7s" begin="3.9s" repeatCount="indefinite" path="M0 0 C21 -9 34 -9 55 0"/>
+<circle class="dot" style="--d:4.6s" cx="440" cy="431" r="7" fill="#6D5CE0">
+  <animateMotion dur="0.7s" begin="4.8s" repeatCount="indefinite" path="M0 0 C21 -9 34 -9 55 0"/>
 </circle>
 ```
-约束：圆点 CSS `--d` ≤ SMIL `begin`（先出现再流动）；`animateMotion` 的 `path` 与箭头路径方向一致；`repeatCount="indefinite"` 默认一直循环流动（无需刷新重播）；**圆点出现 `--d` ≥ 前一条箭头描线完成（draw/draw-sm 的 `--d + 0.7s`），且 `begin` ≥ 前箭头描线完成且 ≥ 后一个目标元素出现完成（up `--d + 0.6s` / fu `--d + 0.5s`）**——可用 `python scripts/verify_animation.py <动画.html>` 自动校验（检查项 5）。
+约束：圆点 CSS `--d` ≤ SMIL `begin`（先出现再流动）；`animateMotion` 的 `path` 与箭头路径方向一致；`repeatCount="indefinite"` 默认一直循环流动（无需刷新重播）；**圆点出现 `--d` ≥ 前一条箭头描线完成（draw/draw-sm 的 `--d + 0.7s`，上例 3.8+0.7=4.5s → 圆点 `--d` 取 4.6s），且 `begin` ≥ 前箭头描线完成且 ≥ 后一个目标元素出现完成（up `--d + 0.6s` / fu `--d + 0.5s`）**——可用 `python scripts/verify_animation.py <动画.html>` 自动校验（检查项 5）。
 
 ## 不可违背的坑（踩过全部修复）
 

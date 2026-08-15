@@ -1,6 +1,6 @@
 ---
 name: handdrawn-architecture-video
-description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格，生成带模块串行出场与箭头描线/圆点流动动画的自包含 HTML，按用户反馈调整元素细节（碰边框、文字溢出、层级遮挡），最后用 headless Chrome 逐帧 PNG + ffmpeg 导出 4K MP4（bt709/tv 色彩）。适用于比赛/路演视频素材制作：架构图、创新卡片（蓝图+记忆、VibeWorking、多角色配音闭环等）的手绘动画版与 4K 成片。包含可复用环境脚本与四份项目样板（墨塑 video_materials）。
+description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格，生成带模块串行出场与箭头描线/圆点流动动画的自包含 HTML，按用户反馈调整元素细节（碰边框、文字溢出、层级遮挡），最后用 1080p CDP screencast 采集 + ffmpeg lanczos 放大导出 4K MP4（bt709/tv 色彩）。适用于比赛/路演视频素材制作：架构图、创新卡片（蓝图+记忆、VibeWorking、多角色配音闭环等）的手绘动画版与 4K 成片。包含可复用环境脚本与项目样板。
 ---
 
 # Handdrawn Architecture Video
@@ -63,7 +63,7 @@ description: 将深色/科技风 SVG 架构图重绘为米色纸面手绘风格�
 | 文字超出框 | 容器太窄/字号太大 | 加宽 rect 或缩字号，右缘 < 框宽 |
 | 元素被遮挡/层级错误 | SVG 按文档序绘制，后绘者在上 | 被挡元素移到文档末尾；或修绝对坐标双重偏移 |
 | 黑底黑字看不见 | CSS 类优先级高于内联 `fill` | 新增白字类或改用深底浅字 |
-| 背景发白 | JPEG 帧 full-range 标记 | 导出用 PNG 帧 + ffmpeg `in_range=full:out_range=tv` + bt709 元数据 |
+| 背景发白 | JPEG 帧 full-range 标记 | 导出用 JPEG 帧 + ffmpeg `scale=in_range=full:out_range=tv` + bt709 元数据 |
 
 改完跑验证脚本确认几何（`右缘 < 框右缘`、`底 < 虚线底`、`层级顺序`），
 并用 `python scripts/verify_sync.py <svg> <html> <token>... [--absent <token>...]` 确认 SVG 与 HTML 同步。

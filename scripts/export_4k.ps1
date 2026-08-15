@@ -24,8 +24,8 @@ if (-not $DurationMs) {
 }
 $NpmProxy = $env:MOSU_NPM_PROXY;            if (-not $NpmProxy) { $NpmProxy = "http://127.0.0.1:7897" }
 $Chrome = $env:MOSU_CHROME;                 if (-not $Chrome) { $Chrome = "C:\Program Files\Google\Chrome\Application\chrome.exe" }
-$Width = $env:MOSU_WIDTH;                   if (-not $Width) { $Width = 3840 }
-$Height = $env:MOSU_HEIGHT;                 if (-not $Height) { $Height = 2160 }
+$Width = $env:MOSU_WIDTH;                   if (-not $Width) { $Width = 1920 }
+$Height = $env:MOSU_HEIGHT;                 if (-not $Height) { $Height = 1080 }
 # 透传给 capture.js（MOSU_WIDTH/HEIGHT/CHROME）
 $env:MOSU_WIDTH = $Width; $env:MOSU_HEIGHT = $Height; $env:MOSU_CHROME = $Chrome
 
